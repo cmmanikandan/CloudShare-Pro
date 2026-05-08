@@ -1,0 +1,509 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-10 md:py-20">
+    <!-- Hero Section -->
+    <div class="text-center mb-12 md:mb-20 space-y-4">
+        <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold border border-blue-100 mb-2">
+            <i class="bi bi-stars"></i> The Future of File Sharing
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
+            Move Files Across The Globe <br class="hidden md:block"> In Seconds
+        </h1>
+        <p class="text-base md:text-lg text-slate-500 font-medium px-4">
+            Experience the fastest way to share, sync, and secure your largest files.
+        </p>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start">
+        
+        <!-- LEFT: UPLOAD SECTION -->
+        <div class="space-y-6 md:space-y-8">
+            <div class="flex items-center gap-3">
+                <h2 class="text-xl font-bold">Upload Files</h2>
+                <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase">Fast Storage</span>
+            </div>
+
+            <div id="upload-initial" class="animate-fade-in">
+                <div id="drop-zone" class="border-2 border-dashed border-slate-200 rounded-3xl p-10 md:p-16 flex flex-col items-center justify-center gap-6 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-blue-50 rounded-full flex items-center justify-center text-2xl md:text-3xl text-blue-600 group-hover:scale-105 transition duration-300">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                    </div>
+                    <div class="text-center space-y-2">
+                        <p class="font-bold text-lg md:text-xl text-slate-900">Drop files to upload</p>
+                        <p class="text-xs md:text-sm text-slate-500">or click to browse from your computer</p>
+                    </div>
+                    <button class="btn-minimal-primary mt-4 w-full md:w-auto">Select Files</button>
+                    <input type="file" id="file-input" class="hidden" multiple>
+                    
+                    <!-- Advanced Upload Options -->
+                    <div class="w-full pt-6 border-t border-slate-100 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Advanced Options</p>
+                            <button id="toggle-advanced" class="text-[10px] font-bold text-blue-600 uppercase hover:underline">Show Options</button>
+                        </div>
+                        <div id="advanced-options" class="hidden space-y-4 animate-fade-in">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5 text-left">
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase">Set Password</label>
+                                    <input type="password" id="upload-password" placeholder="Optional" class="w-full bg-white border border-slate-200 rounded-lg py-2 px-3 text-xs outline-none focus:border-blue-600 transition">
+                                </div>
+                                <div class="space-y-1.5 text-left">
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase">Expires In</label>
+                                    <select id="upload-expiry" class="w-full bg-white border border-slate-200 rounded-lg py-2 px-3 text-xs outline-none focus:border-blue-600 transition appearance-none">
+                                        <option value="1">24 Hours</option>
+                                        <option value="7">7 Days</option>
+                                        <option value="30">30 Days</option>
+                                        <option value="0">Never</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Max size: 2GB per transfer</p>
+                </div>
+            </div>
+
+            <!-- MODAL: Config -->
+            <div id="upload-config-modal" class="hidden animate-fade-in">
+                <div class="minimal-container p-8 space-y-8">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-lg">Selected Files</h4>
+                        <span id="file-stats" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">1 files | 0 KB</span>
+                    </div>
+
+                    <div id="selected-files-list" class="space-y-3 max-h-48 overflow-y-auto pr-2">
+                        <!-- File item -->
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Expiration</label>
+                            <select id="expiry-select" class="w-full">
+                                <option value="1">1 Hour</option>
+                                <option value="24" selected>24 Hours</option>
+                                <option value="168">7 Days</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Access Control</label>
+                            <div class="flex items-center justify-between h-[46px] bg-slate-50 border border-slate-200 rounded-xl px-4">
+                                <span class="text-sm font-medium text-slate-600">Password</span>
+                                <input type="checkbox" id="password-toggle" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button id="start-upload-btn" class="flex-grow btn-minimal-primary py-4">Start Upload</button>
+                        <button onclick="resetUpload()" class="btn-minimal-secondary py-4 px-8">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL: Progress -->
+            <div id="upload-progress-modal" class="hidden animate-fade-in">
+                <div class="minimal-container p-12 text-center space-y-8">
+                    <div class="space-y-4">
+                        <h4 class="text-2xl font-bold">Uploading...</h4>
+                        <p id="progress-stats" class="text-sm font-bold text-blue-600">0% &bull; 0 KB/s</p>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div id="progress-bar-inner" class="w-0 h-full bg-blue-600 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL: Success -->
+            <div id="upload-success-modal" class="hidden animate-fade-in">
+                <div class="minimal-container p-0 overflow-hidden shadow-2xl max-w-2xl mx-auto">
+                    <div class="p-8 md:p-10 text-center space-y-8">
+                        <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto">
+                            <i class="bi bi-check-all"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-2xl font-black text-slate-900">Upload Complete!</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Share ID: <span id="share-code-display" class="text-blue-600">------</span></p>
+                        </div>
+
+                        <!-- Share Link Bar -->
+                        <div class="relative group">
+                            <input type="text" id="share-link-final" readonly class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-5 pr-32 py-4 text-sm font-bold text-slate-900 outline-none">
+                            <button id="copy-btn-final" onclick="copyFinalLink()" class="absolute right-2 top-1/2 -translate-y-1/2 btn-minimal-primary py-2 px-6 text-xs">Copy Link</button>
+                        </div>
+
+                        <!-- Action Tabs -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                            <!-- Email Share -->
+                            <div class="text-left space-y-4 p-6 border border-slate-100 rounded-2xl bg-slate-50/30">
+                                <div class="flex items-center gap-2 text-blue-600">
+                                    <i class="bi bi-envelope-at-fill"></i>
+                                    <span class="text-[10px] font-black uppercase tracking-widest">Share via Email</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <input type="email" id="share-email-recipient" placeholder="Recipient Email" class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs outline-none focus:border-blue-600 transition">
+                                    <textarea id="share-email-message" placeholder="Optional message..." class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs outline-none focus:border-blue-600 transition h-20 resize-none"></textarea>
+                                    <button id="send-email-btn" onclick="sendEmailShare()" class="w-full btn-minimal-secondary py-2.5 text-xs">Send Email</button>
+                                </div>
+                            </div>
+
+                            <!-- More Options -->
+                            <div class="text-left space-y-6 p-6 border border-slate-100 rounded-2xl bg-slate-50/30">
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-2 text-blue-500">
+                                        <i class="bi bi-telegram"></i>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">Telegram Alert</span>
+                                    </div>
+                                    <button id="share-telegram-btn" onclick="shareToTelegram()" class="w-full btn-minimal-secondary py-2.5 text-xs flex items-center justify-center gap-2">
+                                        <i class="bi bi-send-fill"></i>
+                                        Share to Telegram
+                                    </button>
+                                </div>
+                                
+                                <div class="space-y-4 pt-2 border-t border-slate-100">
+                                    <div class="flex items-center gap-2 text-slate-400">
+                                        <i class="bi bi-qr-code"></i>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">QR Code</span>
+                                    </div>
+                                    <button id="show-qr-btn-modal" onclick="showQRModal()" class="w-full bg-white border border-slate-200 text-slate-900 font-bold py-2.5 rounded-xl text-xs hover:bg-slate-50 transition">
+                                        Show QR Code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-slate-100">
+                            <button onclick="resetUpload()" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition">Upload more files</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Share Modal -->
+            <div id="qr-share-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
+                <div class="bg-white rounded-3xl p-10 max-w-sm w-full text-center space-y-6 shadow-2xl">
+                    <h3 class="text-xl font-bold text-slate-900">Scan to Download</h3>
+                    <div id="qrcode-modal-canvas" class="flex justify-center p-4 bg-white border border-slate-100 rounded-2xl mx-auto w-fit"></div>
+                    <p class="text-xs text-slate-500 font-medium">Point your camera at this code to open the files on your phone.</p>
+                    <button onclick="document.getElementById('qr-share-modal').classList.add('hidden')" class="btn-minimal-secondary w-full py-3">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: DOWNLOAD SECTION -->
+        <div class="space-y-8">
+            <div class="flex items-center gap-3">
+                <h2 class="text-xl font-bold">Download Files</h2>
+                <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Direct Access</span>
+            </div>
+
+            <div class="minimal-container p-8 md:p-12 space-y-8">
+                <div class="space-y-4">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Enter Share ID</label>
+                    <div class="flex gap-2 md:gap-3" id="share-id-inputs">
+                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 1)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 2)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 3)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 4)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 5)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 6)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                    </div>
+                </div>
+
+                <button onclick="fetchFile()" class="w-full btn-minimal-primary py-5 text-lg">Access Files</button>
+                
+                <div class="pt-8 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <span class="flex items-center gap-2"><i class="bi bi-shield-check text-blue-600"></i> Secure Download</span>
+                    <span class="flex items-center gap-2"><i class="bi bi-clock"></i> No Wait Time</span>
+                </div>
+            </div>
+
+            <!-- Features Pill Strip -->
+            <div class="flex flex-wrap gap-3 pt-4">
+                <span class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-600">AES-256 Encryption</span>
+                <span class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-600">GDPR Compliant</span>
+                <span class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Instant Sharing</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // UI Elements
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const initialView = document.getElementById('upload-initial');
+    const configModal = document.getElementById('upload-config-modal');
+    const progressModal = document.getElementById('upload-progress-modal');
+    const successModal = document.getElementById('upload-success-modal');
+    
+    const fileListContainer = document.getElementById('selected-files-list');
+    const fileStats = document.getElementById('file-stats');
+    const progressBar = document.getElementById('progress-bar-inner');
+    const progressStats = document.getElementById('progress-stats');
+    
+    const shareCodeDisplay = document.getElementById('share-code-display');
+    const shareLinkFinal = document.getElementById('share-link-final');
+
+    let selectedFiles = [];
+
+    // Drag & Drop
+    const toggleAdvanced = document.getElementById('toggle-advanced');
+    const advancedOptions = document.getElementById('advanced-options');
+
+    if (toggleAdvanced) {
+        toggleAdvanced.onclick = (e) => {
+            e.stopPropagation();
+            advancedOptions.classList.toggle('hidden');
+            toggleAdvanced.innerText = advancedOptions.classList.contains('hidden') ? 'Show Options' : 'Hide Options';
+        };
+    }
+
+    dropZone.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => prepareFiles(e.target.files);
+    
+    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('border-blue-400', 'bg-blue-50/30'); };
+    dropZone.ondragleave = () => { dropZone.classList.remove('border-blue-400', 'bg-blue-50/30'); };
+    dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-400', 'bg-blue-50/30');
+        prepareFiles(e.dataTransfer.files);
+    };
+
+    function prepareFiles(files) {
+        if (files.length === 0) return;
+        selectedFiles = Array.from(files);
+        
+        initialView.classList.add('hidden');
+        configModal.classList.remove('hidden');
+        
+        fileListContainer.innerHTML = '';
+        let totalSize = 0;
+        selectedFiles.forEach((file, index) => {
+            totalSize += file.size;
+            const item = document.createElement('div');
+            item.className = 'flex justify-between items-center bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-medium';
+            item.innerHTML = `
+                <span class="truncate pr-4">${file.name}</span>
+                <button onclick="removeFile(${index})" class="text-slate-400 hover:text-red-500"><i class="bi bi-x-lg"></i></button>
+            `;
+            fileListContainer.appendChild(item);
+        });
+        
+        fileStats.textContent = `${selectedFiles.length} files | ${formatBytes(totalSize)}`;
+    }
+
+    window.removeFile = (index) => {
+        selectedFiles.splice(index, 1);
+        if (selectedFiles.length === 0) resetUpload();
+        else prepareFiles([]); 
+    }
+
+    document.getElementById('start-upload-btn').onclick = () => performUpload();
+
+    function performUpload() {
+        if (selectedFiles.length === 0) return;
+        
+        configModal.classList.add('hidden');
+        progressModal.classList.remove('hidden');
+        
+        const formData = new FormData();
+        selectedFiles.forEach(file => formData.append('file', file));
+
+        // Add advanced options
+        const password = document.getElementById('upload-password').value;
+        const expiryDays = document.getElementById('upload-expiry').value;
+        if (password) formData.append('password', password);
+        if (expiryDays) formData.append('expiry_days', expiryDays);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/upload', true);
+
+        let startTime = Date.now();
+
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                progressBar.style.width = percent + '%';
+                
+                let duration = (Date.now() - startTime) / 1000;
+                let speed = (e.loaded / 1024) / (duration || 1);
+                progressStats.textContent = `${percent}% • ${speed.toFixed(1)} KB/s`;
+            }
+        };
+
+        xhr.onload = () => {
+            if (xhr.status === 201) {
+                const data = JSON.parse(xhr.responseText);
+                showSuccess(data);
+            } else {
+                alert('Upload failed: ' + xhr.responseText);
+                resetUpload();
+            }
+        };
+
+        xhr.send(formData);
+    }
+
+    function showSuccess(data) {
+        progressModal.classList.add('hidden');
+        successModal.classList.remove('hidden');
+        
+        const token = data.share_url.split('/').pop();
+        shareCodeDisplay.innerText = token;
+        shareLinkFinal.value = data.share_url;
+        
+        // Store current share info for other actions
+        window.currentShare = {
+            file_ids: data.file_ids,
+            url: data.share_url,
+            token: token
+        };
+    }
+
+    async function sendEmailShare() {
+        const recipient = document.getElementById('share-email-recipient').value;
+        const message = document.getElementById('share-email-message').value;
+        const btn = document.getElementById('send-email-btn');
+        
+        if (!recipient) {
+            alert('Please enter a recipient email.');
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.innerText = 'Sending...';
+        
+        try {
+            const response = await fetch('/api/share/email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    file_ids: window.currentShare.file_ids,
+                    recipient: recipient,
+                    message: message
+                })
+            });
+            
+            if (response.ok) {
+                alert('Email shared successfully!');
+                document.getElementById('share-email-recipient').value = '';
+                document.getElementById('share-email-message').value = '';
+            } else {
+                alert('Failed to send email.');
+            }
+        } catch (err) {
+            alert('Error sending email.');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Send Email';
+        }
+    }
+
+    function resetUpload() {
+        initialView.classList.remove('hidden');
+        configModal.classList.add('hidden');
+        progressModal.classList.add('hidden');
+        successModal.classList.add('hidden');
+        fileInput.value = '';
+        selectedFiles = [];
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function copyShareCode() {
+        navigator.clipboard.writeText(shareCodeDisplay.textContent);
+        alert('Code copied!');
+    }
+
+    function copyFinalLink() {
+        shareLinkFinal.select();
+        document.execCommand('copy');
+        alert('Link copied!');
+    }
+
+    // Share ID Inputs
+    function moveFocus(input, index) {
+        if (input.value.length >= 1 && index < 6) {
+            const nextInput = document.querySelectorAll('#share-id-inputs input')[index];
+            nextInput.focus();
+        }
+    }
+
+    function fetchFile() {
+        const inputs = document.querySelectorAll('#share-id-inputs input');
+        let shareId = '';
+        inputs.forEach(input => shareId += input.value);
+        if (shareId.length === 6) {
+            window.location.href = `/files/download/${shareId}`;
+        } else {
+            alert('Please enter a valid 6-character Share ID');
+        }
+    }
+
+    // --- P2P Transfer Logic ---
+    const p2pStartBtn = document.querySelector('#p2p-initial button');
+    const p2pStatus = document.getElementById('p2p-status');
+    const p2pSessionId = document.getElementById('p2p-session-id');
+    const p2pInitial = document.getElementById('p2p-initial');
+    const p2pActive = document.getElementById('p2p-active');
+    const p2pJoinBtn = document.querySelector('#p2p-initial .btn-minimal-secondary');
+    const p2pJoinInput = document.querySelector('#p2p-initial input');
+
+    p2pStartBtn.onclick = () => {
+        // Mock Session Generation
+        const sessionId = Math.random().toString(36).substring(2, 8).toUpperCase();
+        p2pSessionId.innerText = sessionId;
+        
+        p2pInitial.classList.add('hidden');
+        p2pActive.classList.remove('hidden');
+        
+        // Mock Status Sequence
+        const statuses = [
+            "Initializing WebRTC...",
+            "Creating signaling channel...",
+            "Waiting for peer to join..."
+        ];
+        
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < statuses.length) {
+                p2pStatus.innerText = statuses[i];
+                i++;
+            } else {
+                clearInterval(interval);
+            }
+        }, 1000);
+    };
+
+    function shareToTelegram() {
+        const text = `📁 Files shared via CloudShare Pro:\n\n${window.currentShare.url}`;
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(window.currentShare.url)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function showQRModal() {
+        const qrContainer = document.getElementById('qrcode-modal-canvas');
+        qrContainer.innerHTML = ''; // Clear previous
+        new QRCode(qrContainer, {
+            text: window.currentShare.url,
+            width: 256,
+            height: 256,
+            colorDark : "#0f172a",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        document.getElementById('qr-share-modal').classList.remove('hidden');
+    }
+</script>
+{% endblock %}

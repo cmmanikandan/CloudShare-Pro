@@ -1,0 +1,279 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-6 space-y-10 animate-fade-in">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div class="space-y-1">
+            <h1 class="text-4xl font-black tracking-tight text-slate-900">Dashboard</h1>
+            <p class="text-sm text-slate-500 font-medium">Welcome back, {{ current_user.username }}</p>
+        </div>
+        <div class="flex gap-3 w-full md:w-auto">
+            <a href="/" class="btn-minimal-primary flex-grow md:flex-initial flex items-center justify-center gap-2 py-3 px-6">
+                <i class="bi bi-plus-lg"></i> New Upload
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="minimal-container p-6 space-y-2">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Files</p>
+            <div class="flex items-end gap-2">
+                <h2 id="stat-total-files" class="text-3xl font-black text-slate-900">0</h2>
+                <span class="text-xs font-bold text-blue-600 mb-1">Files</span>
+            </div>
+        </div>
+        <div class="minimal-container p-6 space-y-2">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Downloads</p>
+            <div class="flex items-end gap-2">
+                <h2 id="stat-downloads" class="text-3xl font-black text-slate-900">0</h2>
+                <span class="text-xs font-bold text-purple-600 mb-1">Hits</span>
+            </div>
+        </div>
+        <div class="minimal-container p-6 space-y-2">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Storage Used</p>
+            <div class="flex items-end gap-2">
+                <h2 id="stat-storage" class="text-3xl font-black text-slate-900">0</h2>
+                <span id="stat-storage-unit" class="text-xs font-bold text-emerald-600 mb-1">MB</span>
+            </div>
+        </div>
+        <div class="minimal-container p-6 space-y-2">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Links</p>
+            <div class="flex items-end gap-2">
+                <h2 id="stat-links" class="text-3xl font-black text-slate-900">0</h2>
+                <span class="text-xs font-bold text-amber-600 mb-1">Live</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Files List -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="minimal-container p-0 overflow-hidden">
+                <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="text-lg font-bold text-slate-900">Recent Uploads</h3>
+                    <div class="relative">
+                        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="file-search" placeholder="Search files..." class="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-blue-600 transition w-48 md:w-64">
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/30">
+                                <th class="px-8 py-4">File Details</th>
+                                <th class="px-4 py-4">Uploaded</th>
+                                <th class="px-4 py-4">Size</th>
+                                <th class="px-4 py-4">Downloads</th>
+                                <th class="px-8 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="files-table-body" class="divide-y divide-slate-100">
+                            <!-- Rows injected via JS -->
+                            <tr id="table-loading">
+                                <td colspan="5" class="py-20 text-center text-slate-400">
+                                    <div class="animate-pulse flex flex-col items-center gap-3">
+                                        <div class="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                        <p class="text-xs font-bold uppercase tracking-widest">Loading your files...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Sidebar -->
+        <div class="space-y-8">
+            <div class="minimal-container p-8 space-y-6">
+                <h3 class="text-lg font-bold text-slate-900">Download Activity</h3>
+                <div class="h-64">
+                    <canvas id="downloadChart"></canvas>
+                </div>
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">Last 7 Days</span>
+                    </div>
+                    <span class="text-xs font-black text-slate-900">+12% vs last week</span>
+                </div>
+            </div>
+
+            <div class="minimal-container p-8 bg-blue-600 text-white border-none shadow-xl shadow-blue-200">
+                <h3 class="text-xl font-bold mb-2">CloudShare Pro</h3>
+                <p class="text-sm opacity-80 mb-6">Unlock unlimited storage and dedicated support.</p>
+                <a href="/pricing" class="block w-full bg-white text-blue-600 font-bold py-3 rounded-xl transition text-center hover:bg-slate-50">
+                    Upgrade Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allFiles = [];
+
+    // Format Bytes
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    // Format Date
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // Fetch Files
+    async function fetchFiles() {
+        try {
+            const response = await fetch('/api/files');
+            if (!response.ok) throw new Error('Failed to fetch');
+            
+            allFiles = await response.json();
+            renderTable(allFiles);
+            updateStats(allFiles);
+        } catch (err) {
+            console.error(err);
+            document.getElementById('files-table-body').innerHTML = `
+                <tr><td colspan="5" class="py-20 text-center text-red-500 font-bold">Failed to load files</td></tr>
+            `;
+        }
+    }
+
+    // Render Table
+    function renderTable(files) {
+        const tbody = document.getElementById('files-table-body');
+        if (files.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="py-20 text-center text-slate-400 font-medium">No files found. Start uploading!</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = files.map(file => `
+            <tr class="hover:bg-slate-50/50 transition">
+                <td class="px-8 py-5">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                            <i class="bi ${getFileIcon(file.mime_type)}"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-900 max-w-[200px] truncate" title="${file.filename}">${file.filename}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${file.mime_type || 'Unknown'}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-4 py-5 text-xs font-bold text-slate-500">${formatDate(file.created_at)}</td>
+                <td class="px-4 py-5 text-xs font-bold text-slate-500">${formatBytes(file.size)}</td>
+                <td class="px-4 py-5">
+                    <span class="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full text-[10px] font-black">${file.downloads}</span>
+                </td>
+                <td class="px-8 py-5 text-right">
+                    <div class="flex justify-end gap-1">
+                        <button onclick="copyLink('${file.url}')" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Copy Link"><i class="bi bi-link-45deg text-lg"></i></button>
+                        <button onclick="deleteFile(${file.id})" class="p-2 text-slate-400 hover:text-red-500 transition" title="Delete"><i class="bi bi-trash text-lg"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function getFileIcon(mime) {
+        if (!mime) return 'bi-file-earmark';
+        if (mime.includes('image')) return 'bi-file-earmark-image';
+        if (mime.includes('pdf')) return 'bi-file-earmark-pdf';
+        if (mime.includes('zip') || mime.includes('compressed')) return 'bi-file-earmark-zip';
+        if (mime.includes('video')) return 'bi-file-earmark-play';
+        return 'bi-file-earmark-text';
+    }
+
+    // Update Stats
+    function updateStats(files) {
+        const totalFiles = files.length;
+        const totalDownloads = files.reduce((acc, f) => acc + (f.downloads || 0), 0);
+        const totalSize = files.reduce((acc, f) => acc + f.size, 0);
+        
+        document.getElementById('stat-total-files').innerText = totalFiles;
+        document.getElementById('stat-downloads').innerText = totalDownloads.toLocaleString();
+        
+        const sizeFormatted = formatBytes(totalSize).split(' ');
+        document.getElementById('stat-storage').innerText = sizeFormatted[0];
+        document.getElementById('stat-storage-unit').innerText = sizeFormatted[1];
+        
+        document.getElementById('stat-links').innerText = totalFiles; // For now
+    }
+
+    // Delete File
+    async function deleteFile(id) {
+        if (!confirm('Are you sure you want to delete this file?')) return;
+        
+        try {
+            const response = await fetch(`/api/files/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                allFiles = allFiles.filter(f => f.id !== id);
+                renderTable(allFiles);
+                updateStats(allFiles);
+            }
+        } catch (err) {
+            alert('Failed to delete file');
+        }
+    }
+
+    // Copy Link
+    function copyLink(url) {
+        navigator.clipboard.writeText(url);
+        alert('File link copied to clipboard!');
+    }
+
+    // Search
+    document.getElementById('file-search').oninput = (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allFiles.filter(f => f.filename.toLowerCase().includes(term));
+        renderTable(filtered);
+    };
+
+    // Chart
+    const ctx = document.getElementById('downloadChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Downloads',
+                data: [65, 59, 80, 81, 56, 55, 40],
+                fill: true,
+                backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                borderColor: '#2563eb',
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { display: false },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } }
+            }
+        }
+    });
+
+    fetchFiles();
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-20 px-6 animate-fade-in">
+    <!-- Main Download Container -->
+    <div class="minimal-container overflow-hidden shadow-sm">
+        <div class="p-12 text-center space-y-10">
+            <!-- File Meta Info -->
+            <div class="space-y-6">
+                <div class="w-20 h-20 bg-blue-50 rounded-2xl mx-auto flex items-center justify-center text-4xl text-blue-600">
+                    <i class="bi bi-file-earmark-arrow-down"></i>
+                </div>
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+                        {% if files|length > 1 %}
+                            {{ files|length }} Files Shared
+                        {% else %}
+                            {{ files[0].original_filename }}
+                        {% endif %}
+                    </h1>
+                    <p class="text-sm font-semibold text-slate-400 uppercase tracking-widest">
+                        {% set total_size = 0 %}
+                        {% for f in files %}
+                            {% set total_size = total_size + (f.file_size or 0) %}
+                        {% endfor %}
+                        {{ (total_size / 1024 / 1024)|round(2) }} MB &bull; {{ files[0].created_at.strftime('%B %d, %Y') }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- File List / Download Action -->
+            <div class="space-y-4">
+                {% if files|length > 1 %}
+                    <div class="space-y-3">
+                        {% for f in files %}
+                        <div class="flex items-center justify-between bg-slate-50 border border-slate-200 p-5 rounded-2xl">
+                            <div class="flex items-center gap-4 text-left">
+                                <div class="w-10 h-10 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-400">
+                                    <i class="bi bi-file-earmark"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-slate-900 truncate max-w-[250px]">{{ f.original_filename }}</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">
+                                        {{ (f.mime_type or 'File')|upper }} &bull; {{ (f.file_size / 1024 / 1024)|round(2) }} MB
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="/files/direct-download/{{ f.id }}" class="btn-minimal-primary py-2 px-6 text-sm">Download</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="/files/direct-download/{{ files[0].id }}" class="w-full btn-minimal-primary py-5 text-lg flex items-center justify-center gap-3">
+                        <i class="bi bi-download"></i>
+                        Download File
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- Footer Details -->
+            <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-shield-check text-blue-600"></i>
+                    <span>Secure Download</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="qr-toggle" class="flex items-center gap-2 hover:text-blue-600 transition">
+                        <i class="bi bi-qr-code"></i>
+                        <span>Show QR Code</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-clock"></i>
+                        <span>Expires: {{ files[0].expiry_date.strftime('%b %d, %Y') if files[0].expiry_date else 'Never' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Modal (Hidden by default) -->
+    <div id="qr-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
+        <div class="bg-white rounded-3xl p-10 max-w-sm w-full text-center space-y-6 shadow-2xl">
+            <h3 class="text-xl font-bold text-slate-900">Scan to Download</h3>
+            <div id="qrcode" class="flex justify-center p-4 bg-white border border-slate-100 rounded-2xl mx-auto w-fit"></div>
+            <p class="text-sm text-slate-500">Scan this code with your mobile camera to access the files instantly.</p>
+            <button id="qr-close" class="btn-minimal-secondary w-full py-3">Close</button>
+        </div>
+    </div>
+
+    <!-- Bottom Action Area -->
+    <div class="mt-12 text-center space-y-6">
+        <p class="text-sm text-slate-500 font-medium">Ready to share your own files?</p>
+        <a href="/" class="inline-flex items-center gap-2 text-blue-600 font-bold hover:underline">
+            Go to CloudShare Pro <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+{% block scripts %}
+<script>
+    const qrToggle = document.getElementById('qr-toggle');
+    const qrModal = document.getElementById('qr-modal');
+    const qrClose = document.getElementById('qr-close');
+    
+    if (qrToggle) {
+        qrToggle.onclick = () => {
+            qrModal.classList.remove('hidden');
+            // Generate QR code if not already generated
+            const qrContainer = document.getElementById('qrcode');
+            if (qrContainer.innerHTML === "") {
+                new QRCode(qrContainer, {
+                    text: window.location.href,
+                    width: 200,
+                    height: 200,
+                    colorDark : "#0f172a",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
+        };
+    }
+    
+    if (qrClose) {
+        qrClose.onclick = () => qrModal.classList.add('hidden');
+    }
+    
+    // Close on outside click
+    qrModal.onclick = (e) => {
+        if (e.target === qrModal) qrModal.classList.add('hidden');
+    };
+</script>
+{% endblock %}

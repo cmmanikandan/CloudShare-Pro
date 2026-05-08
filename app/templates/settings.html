@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-20 px-6 animate-fade-in">
+    <div class="space-y-10">
+        <!-- Header -->
+        <div class="space-y-2">
+            <h1 class="text-4xl font-black tracking-tight text-slate-900">Settings</h1>
+            <p class="text-sm text-slate-500 font-medium">Manage your account, notifications, and integrations.</p>
+        </div>
+
+        <!-- Settings Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <!-- Sidebar Navigation -->
+            <div class="space-y-1">
+                <button class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold bg-blue-50 text-blue-600">Integrations</button>
+                <button class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-400 hover:bg-slate-50 transition">Notifications</button>
+                <button class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-400 hover:bg-slate-50 transition">Security</button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="md:col-span-2 space-y-8">
+                <!-- Telegram Integration -->
+                <div class="minimal-container p-8 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl">
+                                <i class="bi bi-telegram"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Telegram Bot</h3>
+                                <p class="text-xs text-slate-500">Connect to receive upload and download alerts.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {% if current_user.telegram_notifications %}
+                                <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Connected</span>
+                            {% else %}
+                                <span class="bg-slate-50 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase">Not Linked</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-100 space-y-4">
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            To connect, start a conversation with <a href="#" class="text-blue-600 font-bold hover:underline">@CloudShareProBot</a> and use the command <code>/link {{ current_user.id }}</code>.
+                        </p>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <span class="text-xs font-bold text-slate-700">Receive Telegram Alerts</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" {% if current_user.telegram_notifications %}checked{% endif %} class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Notifications -->
+                <div class="minimal-container p-8 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center text-xl">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Email Notifications</h3>
+                            <p class="text-xs text-slate-500">Stay updated on your file activity.</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-100 space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <span class="text-xs font-bold text-slate-700">Successful Upload Alerts</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" {% if current_user.email_notifications %}checked{% endif %} class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <span class="text-xs font-bold text-slate-700">File Download Alerts</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button class="btn-minimal-primary px-10 py-3">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

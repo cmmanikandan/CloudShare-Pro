@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Database
+instance/
+*.db
+
+# Docker
+.docker/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media
+25bb0fac-6fb8-4e5d-8bd9-02b71a29c2e6.png

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: cloudshare_web
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    restart: always
+    networks:
+      - cloudshare_net
+
+  bot:
+    build: .
+    container_name: cloudshare_bot
+    command: python run_bot.py
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    restart: always
+    networks:
+      - cloudshare_net
+    depends_on:
+      - web
+
+networks:
+  cloudshare_net:
+    driver: bridge

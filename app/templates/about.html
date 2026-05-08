@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-20 px-6 animate-fade-in">
+    <div class="text-center mb-16 space-y-4">
+        <h1 class="text-5xl font-black tracking-tight text-slate-900">About CloudShare Pro</h1>
+        <p class="text-lg text-slate-500 font-medium">Redefining how the world shares files.</p>
+    </div>
+
+    <div class="minimal-container p-12 space-y-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold">Our Mission</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    CloudShare Pro was built with a simple goal: to make file sharing as fast, secure, and minimal as possible. We believe that technology should get out of the way, allowing you to move data across the globe in seconds.
+                </p>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold">Privacy First</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Your data is yours. We use end-to-end encryption and zero-knowledge storage principles to ensure that only you and your intended recipients can ever access your files.
+                </p>
+            </div>
+        </div>
+
+        <div class="pt-12 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="space-y-2">
+                <div class="text-3xl font-black text-blue-600">10M+</div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Files Shared</div>
+            </div>
+            <div class="space-y-2">
+                <div class="text-3xl font-black text-blue-600">99.9%</div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Uptime</div>
+            </div>
+            <div class="space-y-2">
+                <div class="text-3xl font-black text-blue-600">0</div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Data Breaches</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
