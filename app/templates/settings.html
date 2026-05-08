@@ -140,6 +140,13 @@
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
+                        <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl">
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Email Delivery Health</p>
+                                <p id="email-health-message" class="text-[10px] font-medium text-slate-400 mt-1">Not tested yet</p>
+                            </div>
+                            <button type="button" id="test-email-health" class="btn-minimal-secondary py-2 px-4 text-xs">Test Email Setup</button>
+                        </div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Download alerts are planned next.</p>
                     </div>
                 </div>
@@ -172,6 +179,8 @@
         if (!form) return;
 
         const telegramBadge = document.getElementById('telegram-status-badge');
+        const emailHealthBtn = document.getElementById('test-email-health');
+        const emailHealthMessage = document.getElementById('email-health-message');
 
         function updateTelegramBadge(enabled) {
             if (!telegramBadge) return;
@@ -216,6 +225,35 @@
                 }
             });
         });
+
+        if (emailHealthBtn && emailHealthMessage) {
+            emailHealthBtn.addEventListener('click', async () => {
+                const originalText = emailHealthBtn.textContent;
+                emailHealthBtn.disabled = true;
+                emailHealthBtn.textContent = 'Checking...';
+
+                try {
+                    const response = await fetch('/api/email/health');
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok || !data.ok) {
+                        emailHealthMessage.textContent = data.message || 'Email health check failed';
+                        emailHealthMessage.className = 'text-[10px] font-medium text-red-600 mt-1';
+                        window.showToast && showToast(data.message || 'Email check failed', 'error');
+                    } else {
+                        emailHealthMessage.textContent = `${(data.provider || 'mail').toUpperCase()}: ${data.message}`;
+                        emailHealthMessage.className = 'text-[10px] font-medium text-emerald-600 mt-1';
+                        window.showToast && showToast('Email setup is working', 'success');
+                    }
+                } catch (error) {
+                    emailHealthMessage.textContent = 'Email health check failed';
+                    emailHealthMessage.className = 'text-[10px] font-medium text-red-600 mt-1';
+                    window.showToast && showToast('Email check failed', 'error');
+                } finally {
+                    emailHealthBtn.disabled = false;
+                    emailHealthBtn.textContent = originalText;
+                }
+            });
+        }
     })();
 </script>
 {% endblock %}

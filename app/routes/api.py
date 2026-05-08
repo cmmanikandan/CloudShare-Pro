@@ -1,12 +1,60 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_login import current_user
 import cloudinary.uploader
 from app.models.file import File, DownloadLog
 from app import db
 import uuid
 from datetime import datetime, timedelta
+import smtplib
+import requests
 
 api_bp = Blueprint('api', __name__)
+
+@api_bp.route('/email/health', methods=['GET'])
+def email_health():
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    provider = (current_app.config.get('MAIL_PROVIDER') or 'smtp').lower()
+
+    try:
+        if provider == 'resend':
+            api_key = current_app.config.get('RESEND_API_KEY')
+            if not api_key:
+                return jsonify({'ok': False, 'provider': provider, 'message': 'RESEND_API_KEY is missing'}), 400
+
+            response = requests.get(
+                'https://api.resend.com/domains',
+                headers={'Authorization': f'Bearer {api_key}'},
+                timeout=10,
+            )
+            if response.status_code >= 400:
+                return jsonify({'ok': False, 'provider': provider, 'message': f'Resend auth failed ({response.status_code})'}), 400
+
+            return jsonify({'ok': True, 'provider': provider, 'message': 'Resend configuration is valid'}), 200
+
+        host = current_app.config.get('MAIL_SERVER')
+        port = int(current_app.config.get('MAIL_PORT') or 587)
+        username = current_app.config.get('MAIL_USERNAME')
+        password = current_app.config.get('MAIL_PASSWORD')
+        use_tls = bool(current_app.config.get('MAIL_USE_TLS'))
+
+        if not host or not username or not password:
+            return jsonify({'ok': False, 'provider': 'smtp', 'message': 'SMTP settings are incomplete'}), 400
+
+        server = smtplib.SMTP(host, port, timeout=15)
+        try:
+            server.ehlo()
+            if use_tls:
+                server.starttls()
+                server.ehlo()
+            server.login(username, password)
+        finally:
+            server.quit()
+
+        return jsonify({'ok': True, 'provider': 'smtp', 'message': 'SMTP login successful'}), 200
+    except Exception as e:
+        return jsonify({'ok': False, 'provider': provider, 'message': f'Email health check failed: {str(e)}'}), 500
 
 @api_bp.route('/upload', methods=['POST'])
 def upload_file():
