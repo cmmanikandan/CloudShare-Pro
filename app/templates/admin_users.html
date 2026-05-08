@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-6 space-y-10 animate-fade-in">
+    <!-- Header -->
+    <div class="space-y-4 w-full">
+        <div class="space-y-1">
+            <h1 class="text-4xl font-black tracking-tight text-slate-900">Manage Users</h1>
+            <p class="text-sm text-slate-500 font-medium">View and manage all registered users</p>
+        </div>
+        
+        <!-- Admin Navigation -->
+        <div class="flex gap-1 bg-slate-100 p-1 rounded-2xl w-fit">
+            <a href="/admin" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition">Dashboard</a>
+            <a href="/admin/users" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-white text-blue-600 shadow-sm transition">Manage Users</a>
+            <a href="/admin/files" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition">Manage Files</a>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="minimal-container p-0 overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50/50 border-b border-slate-100">
+                <tr>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">User</th>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Joined</th>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for user in users %}
+                <tr class="hover:bg-slate-50/30 transition">
+                    <td class="p-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-black text-xs">
+                                {{ user.username[0] | upper }}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-900">{{ user.username }}</p>
+                                <p class="text-xs text-slate-500">{{ user.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-6">
+                        {% if user.is_verified %}
+                        <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Verified</span>
+                        {% else %}
+                        <span class="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Unverified</span>
+                        {% endif %}
+                        {% if user.role == 'admin' %}
+                        <span class="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ml-2">Admin</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-6 text-sm text-slate-500 font-medium">
+                        {{ user.created_at.strftime('%Y-%m-%d') }}
+                    </td>
+                    <td class="p-6 text-right">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="deleteUser({{ user.id }})" class="p-2 text-slate-300 hover:text-red-500 transition">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function deleteUser(id) {
+        if (!confirm('Are you sure you want to delete this user? This will also delete all their files.')) return;
+        
+        try {
+            const response = await fetch(`/admin/users/delete/${id}`);
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to delete user.');
+            }
+        } catch (err) {
+            alert('Error deleting user.');
+        }
+    }
+</script>
+{% endblock %}

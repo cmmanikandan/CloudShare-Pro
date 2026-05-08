@@ -17,6 +17,10 @@ class User(UserMixin, db.Model):
     email_notifications = db.Column(db.Boolean, default=True)
     telegram_notifications = db.Column(db.Boolean, default=False)
     
+    # Security & Verification
+    is_verified = db.Column(db.Boolean, default=False)
+    verification_code = db.Column(db.String(6), nullable=True)
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     files = db.relationship('File', backref='owner', lazy='dynamic')
@@ -40,8 +44,11 @@ class ActivityLog(db.Model):
     __tablename__ = 'activity_logs'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    activity = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    file_id = db.Column(db.Integer, db.ForeignKey('files.id'))
+    ip_address = db.Column(db.String(45))
+    country = db.Column(db.String(100), default='Unknown')
+    user_agent = db.Column(db.String(255))
+    downloaded_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class EmailShare(db.Model):
     __tablename__ = 'email_shares'

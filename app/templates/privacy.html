@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-20 animate-fade-in space-y-12">
+    <div class="space-y-4">
+        <h1 class="text-4xl font-black text-slate-900">Privacy Policy</h1>
+        <p class="text-sm text-slate-400 font-bold uppercase tracking-widest">Last Updated: May 2026</p>
+    </div>
+
+    <div class="space-y-8 text-slate-600 leading-relaxed text-sm">
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900">1. Data Collection</h2>
+            <p>CloudShare Pro collects minimal data necessary to provide our services. This includes your email address for account management and metadata for files you upload (filename, size, and expiration settings).</p>
+        </section>
+
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900">2. File Security & Encryption</h2>
+            <p>All files uploaded to CloudShare Pro are stored using industry-standard AES-256 encryption. We do not have access to the contents of your files unless you explicitly share them via public links.</p>
+            <p>For P2P transfers, data is sent directly between devices and never touches our servers.</p>
+        </section>
+
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900">3. Third-Party Services</h2>
+            <p>We use Cloudinary for secure file storage and Flask-Mail for email notifications. These providers are strictly vetted for security and compliance with international data protection laws (GDPR, CCPA).</p>
+        </section>
+
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900">4. Your Rights</h2>
+            <p>You have the right to access, export, or delete your data at any time. Deleting a file from your dashboard removes all traces from our servers and storage providers immediately.</p>
+        </section>
+
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900">5. Contact</h2>
+            <p>For privacy-related inquiries, please contact us at <a href="mailto:privacy@cloudshare.pro" class="text-blue-600 font-bold hover:underline">privacy@cloudshare.pro</a>.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}

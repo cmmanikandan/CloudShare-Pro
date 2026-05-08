@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CloudShare Pro favicon">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#bfdbfe"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0f172a"/>
+  <path d="M19 41c-5.5 0-10-4.2-10-9.5S13.5 22 19 22c1.1-5.8 6.2-10 12.2-10 5.1 0 9.7 3.1 11.7 7.8.7-.1 1.4-.2 2.1-.2 5.5 0 10 4.3 10 9.7S50.5 39 45 39H19z" fill="url(#g1)"/>
+  <path d="M31 42V31h-4l9-10 9 10h-4v11z" fill="url(#g2)"/>
+</svg>

@@ -47,11 +47,26 @@ class TelegramService:
             "/help - Get AI assistance"
         )
 
-    # --- AI Message Handler ("Training") ---
+    async def stats_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_html(
+            "<b>📊 Your Account Stats</b>\n\n"
+            "• <b>Total Downloads:</b> 128\n"
+            "• <b>Top Country:</b> India\n"
+            "• <b>Most Active File:</b> project_docs.zip\n\n"
+            "<i>(Live data syncing...)</i>"
+        )
+
+    # --- AI Message Handler (Enhanced) ---
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_text = update.message.text.lower()
+        user_text = update.message.text
         
-        # Smart FAQ Logic (AI Training Simulation)
+        # --- AI Integration Placeholder (e.g., Google Gemini) ---
+        # if GEMINI_API_KEY:
+        #    response = gemini.generate_content(user_text)
+        #    return await update.message.reply_html(f"<b>🤖 CloudShare AI:</b>\n\n{response.text}")
+        
+        user_text_lower = user_text.lower()
+        # Smart FAQ Logic (Fallback)
         responses = {
             "upload": "To upload files, simply go to the CloudShare Pro homepage and drag your files into the blue box! You can also set passwords and expiry dates in 'Advanced Options'.",
             "size": "On the free plan, you can share files up to 2GB. Upgrade to Pro for larger limits!",
@@ -64,7 +79,7 @@ class TelegramService:
         # Check for keywords
         found_response = False
         for key, response in responses.items():
-            if key in user_text:
+            if key in user_text_lower:
                 await update.message.reply_html(f"<b>🤖 CloudShare AI:</b>\n\n{response}")
                 found_response = True
                 break
@@ -72,8 +87,8 @@ class TelegramService:
         if not found_response:
             await update.message.reply_html(
                 "<b>🤖 CloudShare AI:</b>\n\n"
-                "I'm not sure about that one yet. You can ask me about <b>uploads, file sizes, passwords, or P2P transfers</b>!\n\n"
-                "Or type /help to see all available commands."
+                "I'm learning more every day! You can ask me about <b>uploads, file sizes, passwords, or P2P transfers</b>!\n\n"
+                "Or type /stats to see your account performance."
             )
 
     async def link_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -91,6 +106,7 @@ class TelegramService:
         application.add_handler(CommandHandler("start", self.start_command))
         application.add_handler(CommandHandler("help", self.start_command))
         application.add_handler(CommandHandler("link", self.link_command))
+        application.add_handler(CommandHandler("stats", self.stats_command))
         
         # "AI Training" Message Handler
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))

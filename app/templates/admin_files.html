@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-6 space-y-10 animate-fade-in">
+    <!-- Header -->
+    <div class="space-y-4 w-full">
+        <div class="space-y-1">
+            <h1 class="text-4xl font-black tracking-tight text-slate-900">Manage Files</h1>
+            <p class="text-sm text-slate-500 font-medium">Monitor and manage all global uploads</p>
+        </div>
+        
+        <!-- Admin Navigation -->
+        <div class="flex gap-1 bg-slate-100 p-1 rounded-2xl w-fit">
+            <a href="/admin" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition">Dashboard</a>
+            <a href="/admin/users" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition">Manage Users</a>
+            <a href="/admin/files" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-white text-blue-600 shadow-sm transition">Manage Files</a>
+        </div>
+    </div>
+
+    <!-- Files Table -->
+    <div class="minimal-container p-0 overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50/50 border-b border-slate-100">
+                <tr>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">File Name</th>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Owner</th>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Size / Type</th>
+                    <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for file in files %}
+                <tr class="hover:bg-slate-50/30 transition">
+                    <td class="p-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-slate-100 text-slate-400 rounded-lg flex items-center justify-center text-xl">
+                                <i class="bi bi-file-earmark"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-slate-900 truncate max-w-[200px]" title="{{ file.original_filename }}">
+                                    {{ file.original_filename }}
+                                </p>
+                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">ID: {{ file.share_token }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-6 text-sm text-slate-500 font-medium">
+                        {{ file.owner.username if file.owner else 'Anonymous' }}
+                    </td>
+                    <td class="p-6">
+                        <p class="text-sm font-bold text-slate-900">{{ (file.file_size / 1024 / 1024) | round(2) }} MB</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ file.mime_type or 'File' }}</p>
+                    </td>
+                    <td class="p-6 text-right">
+                        <div class="flex justify-end gap-2">
+                            <a href="/files/download/{{ file.share_token }}" class="p-2 text-slate-300 hover:text-blue-600 transition" title="Open Download Page">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <button onclick="deleteFile({{ file.id }})" class="p-2 text-slate-300 hover:text-red-500 transition">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function deleteFile(id) {
+        if (!confirm('Are you sure you want to delete this file? This will remove it from Cloudinary and the database.')) return;
+        
+        try {
+            const response = await fetch(`/api/files/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to delete file.');
+            }
+        } catch (err) {
+            alert('Error deleting file.');
+        }
+    }
+</script>
+{% endblock %}

@@ -5,6 +5,22 @@
     <!-- Main Download Container -->
     <div class="minimal-container overflow-hidden shadow-sm">
         <div class="p-12 text-center space-y-10">
+            <!-- Share Code Banner -->
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-5 text-left flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">Download Code</p>
+                    <div class="mt-2 flex flex-wrap items-center gap-3">
+                        <span class="text-2xl font-black tracking-[0.2em] text-slate-900 break-all">{{ share_code }}</span>
+                        <button type="button" onclick="copyShareCode()" class="btn-minimal-secondary py-2 px-4 text-xs">Copy code</button>
+                        <button type="button" onclick="copyShareLink()" class="btn-minimal-primary py-2 px-4 text-xs">Copy link</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                    <i class="bi bi-link-45deg text-blue-600"></i>
+                    <span>{{ share_url }}</span>
+                </div>
+            </div>
+
             <!-- File Meta Info -->
             <div class="space-y-6">
                 <div class="w-20 h-20 bg-blue-50 rounded-2xl mx-auto flex items-center justify-center text-4xl text-blue-600">
@@ -19,13 +35,19 @@
                         {% endif %}
                     </h1>
                     <p class="text-sm font-semibold text-slate-400 uppercase tracking-widest">
-                        {% set total_size = 0 %}
-                        {% for f in files %}
-                            {% set total_size = total_size + (f.file_size or 0) %}
-                        {% endfor %}
                         {{ (total_size / 1024 / 1024)|round(2) }} MB &bull; {{ files[0].created_at.strftime('%B %d, %Y') }}
                     </p>
                 </div>
+            </div>
+
+            <!-- Expiration Status -->
+            <div class="flex flex-wrap justify-center gap-3">
+                {% for f in files %}
+                <div data-expiry-label data-expiry="{{ f.expiry_date.isoformat() if f.expiry_date else '' }}" class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest border {% if f.expiry_state == 'expired' %}bg-red-50 text-red-700 border-red-200{% elif f.expiry_state == 'active' %}bg-emerald-50 text-emerald-700 border-emerald-200{% else %}bg-slate-50 text-slate-600 border-slate-200{% endif %}">
+                    <i class="bi bi-clock"></i>
+                    <span>{{ f.expiry_label }}</span>
+                </div>
+                {% endfor %}
             </div>
 
             <!-- File List / Download Action -->
@@ -42,6 +64,9 @@
                                     <p class="text-sm font-bold text-slate-900 truncate max-w-[250px]">{{ f.original_filename }}</p>
                                     <p class="text-[10px] font-bold text-slate-400 uppercase">
                                         {{ (f.mime_type or 'File')|upper }} &bull; {{ (f.file_size / 1024 / 1024)|round(2) }} MB
+                                    </p>
+                                    <p class="mt-1 text-[10px] font-bold uppercase tracking-widest {% if f.expiry_state == 'expired' %}text-red-500{% elif f.expiry_state == 'active' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+                                        {{ f.expiry_label }}
                                     </p>
                                 </div>
                             </div>
@@ -70,7 +95,7 @@
                     </button>
                     <div class="flex items-center gap-2">
                         <i class="bi bi-clock"></i>
-                        <span>Expires: {{ files[0].expiry_date.strftime('%b %d, %Y') if files[0].expiry_date else 'Never' }}</span>
+                        <span id="footer-expiry-label" data-expiry-label data-expiry="{{ files[0].expiry_date.isoformat() if files[0].expiry_date else '' }}">Expires: {{ files[0].expiry_date.strftime('%b %d, %Y') if files[0].expiry_date else 'Never' }}</span>
                     </div>
                 </div>
             </div>
@@ -95,11 +120,99 @@
         </a>
     </div>
 </div>
+{% endblock %}
 {% block scripts %}
 <script>
     const qrToggle = document.getElementById('qr-toggle');
     const qrModal = document.getElementById('qr-modal');
     const qrClose = document.getElementById('qr-close');
+
+    async function copyText(text, message) {
+        try {
+            await navigator.clipboard.writeText(text);
+            if (window.showToast) {
+                showToast(message, 'success');
+            }
+        } catch (error) {
+            const fallback = document.createElement('textarea');
+            fallback.value = text;
+            document.body.appendChild(fallback);
+            fallback.select();
+            document.execCommand('copy');
+            fallback.remove();
+            if (window.showToast) {
+                showToast(message, 'success');
+            }
+        }
+    }
+
+    function copyShareCode() {
+        copyText({{ share_code|tojson }}, 'Share code copied');
+    }
+
+    function copyShareLink() {
+        copyText({{ share_url|tojson }}, 'Share link copied');
+    }
+
+    function formatRemaining(ms) {
+        const totalMinutes = Math.max(0, Math.floor(ms / 60000));
+        const days = Math.floor(totalMinutes / (60 * 24));
+        const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+        const minutes = totalMinutes % 60;
+
+        const parts = [];
+        if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+        if (hours > 0) parts.push(`${hours} hr${hours !== 1 ? 's' : ''}`);
+        if (parts.length === 0 && minutes > 0) parts.push(`${minutes} min${minutes !== 1 ? 's' : ''}`);
+        return parts.slice(0, 2).join(' ') || '0 min';
+    }
+
+    function updateExpiryLabels() {
+        const nodes = document.querySelectorAll('[data-expiry-label]');
+        const now = new Date();
+
+        nodes.forEach((node) => {
+            const expiry = node.getAttribute('data-expiry');
+            if (!expiry) return;
+
+            const expiryDate = new Date(expiry);
+            if (Number.isNaN(expiryDate.getTime())) return;
+
+            const diff = expiryDate.getTime() - now.getTime();
+            let label = '';
+            let classes = ['inline-flex', 'items-center', 'gap-2', 'rounded-full', 'px-4', 'py-2', 'text-xs', 'font-bold', 'uppercase', 'tracking-widest', 'border'];
+
+            if (diff > 0) {
+                label = `${formatRemaining(diff)} remaining`;
+                classes.push('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+            } else {
+                label = `Expired ${formatRemaining(Math.abs(diff))} ago`;
+                classes.push('bg-red-50', 'text-red-700', 'border-red-200');
+            }
+
+            node.className = classes.join(' ');
+            const textNode = node.querySelector('span');
+            if (textNode) {
+                textNode.textContent = label;
+            } else {
+                node.textContent = label;
+            }
+        });
+
+        const footerLabel = document.getElementById('footer-expiry-label');
+        if (footerLabel) {
+            const expiry = footerLabel.getAttribute('data-expiry');
+            if (expiry) {
+                const expiryDate = new Date(expiry);
+                if (!Number.isNaN(expiryDate.getTime())) {
+                    const diff = expiryDate.getTime() - now.getTime();
+                    footerLabel.textContent = diff > 0
+                        ? `Expires in ${formatRemaining(diff)}`
+                        : `Expired ${formatRemaining(Math.abs(diff))} ago`;
+                }
+            }
+        }
+    }
     
     if (qrToggle) {
         qrToggle.onclick = () => {
@@ -108,7 +221,7 @@
             const qrContainer = document.getElementById('qrcode');
             if (qrContainer.innerHTML === "") {
                 new QRCode(qrContainer, {
-                    text: window.location.href,
+                    text: {{ share_url|tojson }},
                     width: 200,
                     height: 200,
                     colorDark : "#0f172a",
@@ -127,5 +240,8 @@
     qrModal.onclick = (e) => {
         if (e.target === qrModal) qrModal.classList.add('hidden');
     };
+
+    updateExpiryLabels();
+    setInterval(updateExpiryLabels, 60000);
 </script>
 {% endblock %}

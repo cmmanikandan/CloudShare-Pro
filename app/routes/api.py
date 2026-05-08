@@ -50,6 +50,7 @@ def upload_file():
         # Get advanced options
         password = request.form.get('password')
         expiry_days = request.form.get('expiry_days')
+        one_time_download = request.form.get('one_time_download') == '1'
         
         expiry_date = None
         if expiry_days and expiry_days != '0':
@@ -72,9 +73,11 @@ def upload_file():
                 mime_type=upload_result.get('format') or file.content_type,
                 share_token=batch_token,
                 password=password, # Save password
-                expiry_date=expiry_date # Save expiry
+                expiry_date=expiry_date, # Save expiry
+                one_time_download=one_time_download
             )
             db.session.add(new_file)
+            db.session.flush()
             results.append(new_file.id)
         
         db.session.commit()
@@ -100,6 +103,9 @@ def get_files():
         'id': f.id,
         'filename': f.original_filename,
         'url': f.secure_url,
+        'download_url': f'/files/direct-download/{f.id}',
+        'download_page_url': f'/files/download/{f.share_token}',
+        'share_code': f.share_token,
         'size': f.file_size,
         'mime_type': f.mime_type,
         'created_at': f.created_at.isoformat(),
@@ -125,6 +131,25 @@ def delete_file(file_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@api_bp.route('/files/<int:file_id>/rename', methods=['PATCH'])
+def rename_file(file_id):
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    file = File.query.filter_by(id=file_id, user_id=current_user.id).first()
+    if not file:
+        return jsonify({'error': 'File not found'}), 404
+
+    data = request.get_json(silent=True) or {}
+    new_name = (data.get('filename') or '').strip()
+
+    if len(new_name) < 2:
+        return jsonify({'error': 'Please enter a valid file name'}), 400
+
+    file.original_filename = new_name
+    db.session.commit()
+    return jsonify({'message': 'File renamed successfully', 'filename': file.original_filename}), 200
+
 @api_bp.route('/share/email', methods=['POST'])
 def share_via_email():
     data = request.json
@@ -145,13 +170,64 @@ def share_via_email():
     
     try:
         send_share_email(recipient, files, share_url, password=files[0].password, message=message)
-        
+
         # Log the share
         for f in files:
             share_log = EmailShare(file_id=f.id, recipient_email=recipient)
             db.session.add(share_log)
         db.session.commit()
-        
+
         return jsonify({'message': 'Email sent successfully'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Provide a clear error message to the client
+        return jsonify({'error': 'Failed to send email: ' + str(e)}), 500
+@api_bp.route('/analytics', methods=['GET'])
+def get_analytics():
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    # Get all files for the user
+    user_files = File.query.filter_by(user_id=current_user.id).all()
+    file_ids = [f.id for f in user_files]
+    
+    # Aggregated Stats
+    total_downloads = sum(f.download_count for f in user_files)
+    
+    # Country Stats
+    from sqlalchemy import func
+    country_stats = db.session.query(
+        DownloadLog.country, func.count(DownloadLog.id)
+    ).filter(DownloadLog.file_id.in_(file_ids)).group_by(DownloadLog.country).all()
+    
+    # Browser Stats
+    browser_stats = db.session.query(
+        DownloadLog.user_agent, func.count(DownloadLog.id)
+    ).filter(DownloadLog.file_id.in_(file_ids)).group_by(DownloadLog.user_agent).all()
+
+    # Last 7 days download trend
+    end_date = datetime.utcnow().date()
+    start_date = end_date - timedelta(days=6)
+    daily_rows = db.session.query(
+        func.date(DownloadLog.downloaded_at), func.count(DownloadLog.id)
+    ).filter(
+        DownloadLog.file_id.in_(file_ids),
+        func.date(DownloadLog.downloaded_at) >= start_date.isoformat(),
+        func.date(DownloadLog.downloaded_at) <= end_date.isoformat()
+    ).group_by(func.date(DownloadLog.downloaded_at)).all()
+
+    daily_map = {row_date: count for row_date, count in daily_rows}
+    daily_downloads = []
+    for offset in range(7):
+        day = start_date + timedelta(days=offset)
+        daily_downloads.append({
+            'date': day.isoformat(),
+            'label': day.strftime('%a'),
+            'count': daily_map.get(day.isoformat(), 0)
+        })
+    
+    return jsonify({
+        'total_downloads': total_downloads,
+        'country_stats': [{'country': c, 'count': count} for c, count in country_stats],
+        'browser_stats': [{'ua': ua, 'count': count} for ua, count in browser_stats],
+        'daily_downloads': daily_downloads
+    })

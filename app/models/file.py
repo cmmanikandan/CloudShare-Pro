@@ -30,4 +30,6 @@ class DownloadLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey('files.id'))
     ip_address = db.Column(db.String(45))
+    country = db.Column(db.String(100), default='Unknown')
+    user_agent = db.Column(db.String(255))
     downloaded_at = db.Column(db.DateTime, default=datetime.utcnow)

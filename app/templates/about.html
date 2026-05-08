@@ -1,40 +1,45 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-20 px-6 animate-fade-in">
-    <div class="text-center mb-16 space-y-4">
-        <h1 class="text-5xl font-black tracking-tight text-slate-900">About CloudShare Pro</h1>
-        <p class="text-lg text-slate-500 font-medium">Redefining how the world shares files.</p>
+<div class="max-w-4xl mx-auto px-6 py-20 animate-fade-in space-y-20">
+    <!-- Hero -->
+    <div class="text-center space-y-6">
+        <h1 class="text-5xl font-black tracking-tight text-slate-900">Moving Data Better.</h1>
+        <p class="text-xl text-slate-500 leading-relaxed">We started CloudShare Pro with a simple mission: to make sharing your largest files as easy as sending a text message.</p>
     </div>
 
-    <div class="minimal-container p-12 space-y-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold">Our Mission</h3>
-                <p class="text-slate-600 leading-relaxed">
-                    CloudShare Pro was built with a simple goal: to make file sharing as fast, secure, and minimal as possible. We believe that technology should get out of the way, allowing you to move data across the globe in seconds.
-                </p>
-            </div>
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold">Privacy First</h3>
-                <p class="text-slate-600 leading-relaxed">
-                    Your data is yours. We use end-to-end encryption and zero-knowledge storage principles to ensure that only you and your intended recipients can ever access your files.
-                </p>
+    <!-- Vision -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div class="space-y-6">
+            <h2 class="text-3xl font-black text-slate-900">Our Vision</h2>
+            <p class="text-sm text-slate-500 leading-relaxed">In a world where data is growing exponentially, traditional sharing methods are becoming bottlenecks. We believe in a future where high-speed, secure, and decentralized sharing is the standard.</p>
+            <p class="text-sm text-slate-500 leading-relaxed">By combining modern cloud architecture with P2P technologies and AI assistants, we're building the infrastructure for the next generation of digital collaboration.</p>
+        </div>
+        <div class="bg-blue-50 rounded-3xl p-10 flex items-center justify-center">
+            <div class="w-24 h-24 text-blue-600">
+                <i class="bi bi-globe-americas text-[100px]"></i>
             </div>
         </div>
+    </div>
 
-        <div class="pt-12 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div class="space-y-2">
-                <div class="text-3xl font-black text-blue-600">10M+</div>
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Files Shared</div>
+    <!-- Values -->
+    <div class="space-y-10">
+        <h2 class="text-3xl font-black text-center text-slate-900">Our Core Values</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="space-y-4">
+                <div class="text-blue-600 text-2xl font-black">01.</div>
+                <h4 class="font-bold text-slate-900">Privacy First</h4>
+                <p class="text-xs text-slate-500">Your data is yours. We use zero-knowledge principles to ensure your privacy is never compromised.</p>
             </div>
-            <div class="space-y-2">
-                <div class="text-3xl font-black text-blue-600">99.9%</div>
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Uptime</div>
+            <div class="space-y-4">
+                <div class="text-blue-600 text-2xl font-black">02.</div>
+                <h4 class="font-bold text-slate-900">Radical Simplicity</h4>
+                <p class="text-xs text-slate-500">Powerful features shouldn't be complicated. We obsess over every pixel to make your workflow seamless.</p>
             </div>
-            <div class="space-y-2">
-                <div class="text-3xl font-black text-blue-600">0</div>
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Data Breaches</div>
+            <div class="space-y-4">
+                <div class="text-blue-600 text-2xl font-black">03.</div>
+                <h4 class="font-bold text-slate-900">Speed is a Feature</h4>
+                <p class="text-xs text-slate-500">Every millisecond counts. We optimize our global network to ensure your files arrive faster than ever.</p>
             </div>
         </div>
     </div>

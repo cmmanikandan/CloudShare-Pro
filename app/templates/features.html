@@ -1,54 +1,67 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto py-20 px-6 animate-fade-in">
+<div class="max-w-7xl mx-auto px-6 py-20 animate-fade-in">
+    <!-- Header -->
     <div class="text-center mb-20 space-y-4">
-        <h1 class="text-5xl font-black tracking-tight text-slate-900">Powerful Features</h1>
-        <p class="text-lg text-slate-500 font-medium">Everything you need to share files securely.</p>
+        <h1 class="text-5xl font-black tracking-tight text-slate-900">Platform Features</h1>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto">Everything you need to share files securely and efficiently across any device.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="minimal-container p-10 space-y-6">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
-                <i class="bi bi-lightning-charge"></i>
+    <!-- Feature Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <!-- P2P -->
+        <div class="minimal-container p-10 space-y-6 hover:border-blue-400 transition">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
+                <i class="bi bi-cpu"></i>
             </div>
-            <h3 class="text-xl font-bold">Lightning Fast</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Our global CDN ensures your files are uploaded and downloaded at the maximum speed possible, anywhere in the world.</p>
+            <h3 class="text-2xl font-bold text-slate-900">P2P Instant Transfer</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Direct device-to-device sharing. Your files never touch a server, ensuring maximum privacy and unlimited speed.</p>
         </div>
-        <div class="minimal-container p-10 space-y-6">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
-                <i class="bi bi-shield-check"></i>
+
+        <!-- AI Bot -->
+        <div class="minimal-container p-10 space-y-6 hover:border-blue-400 transition">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
+                <i class="bi bi-robot"></i>
             </div>
-            <h3 class="text-xl font-bold">Secure Storage</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Advanced AES-256 encryption at rest and TLS in transit. Your files are safe from the moment they leave your computer.</p>
+            <h3 class="text-2xl font-bold text-slate-900">AI Telegram Assistant</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Manage your shares directly from Telegram. Get instant alerts and use AI to help your recipients download files.</p>
         </div>
-        <div class="minimal-container p-10 space-y-6">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
-                <i class="bi bi-clock-history"></i>
+
+        <!-- Security -->
+        <div class="minimal-container p-10 space-y-6 hover:border-blue-400 transition">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
+                <i class="bi bi-shield-lock"></i>
             </div>
-            <h3 class="text-xl font-bold">Auto Expiry</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Set your files to expire automatically after a set period. One-time downloads and time-based limits supported.</p>
+            <h3 class="text-2xl font-bold text-slate-900">AES-256 Security</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Industry-standard encryption for all stored files. Add your own passwords and set custom expiration dates.</p>
         </div>
-        <div class="minimal-container p-10 space-y-6">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
+
+        <!-- QR Codes -->
+        <div class="minimal-container p-10 space-y-6 hover:border-blue-400 transition">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
                 <i class="bi bi-qr-code"></i>
             </div>
-            <h3 class="text-xl font-bold">QR Sharing</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Instantly share files to mobile devices with auto-generated QR codes for every transfer.</p>
+            <h3 class="text-2xl font-bold text-slate-900">QR Smart Sharing</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Instantly generate QR codes for mobile downloads. Perfect for transferring files from PC to phone in one scan.</p>
         </div>
-        <div class="minimal-container p-10 space-y-6">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
-                <i class="bi bi-files"></i>
+
+        <!-- Email -->
+        <div class="minimal-container p-10 space-y-6 hover:border-blue-400 transition">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
+                <i class="bi bi-envelope-check"></i>
             </div>
-            <h3 class="text-xl font-bold">Batch Uploads</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Send multiple files at once. We group them under a single shareable link for your convenience.</p>
+            <h3 class="text-2xl font-bold text-slate-900">Email Distribution</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Send secure links directly to recipients with custom messages. Includes professional delivery tracking.</p>
         </div>
-        <div class="minimal-container p-10 space-y-6">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
-                <i class="bi bi-lock"></i>
+
+        <!-- Dashboard -->
+        <div class="minimal-container p-10 space-y-6 hover:border-blue-400 transition">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
+                <i class="bi bi-grid-1x2"></i>
             </div>
-            <h3 class="text-xl font-bold">Password Protect</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Add an extra layer of security with custom passwords for any shared link.</p>
+            <h3 class="text-2xl font-bold text-slate-900">Live Dashboard</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">A central hub to manage your history, view download statistics, and control active links in real-time.</p>
         </div>
     </div>
 </div>

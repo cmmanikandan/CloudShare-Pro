@@ -10,13 +10,20 @@
     <!-- Login Card -->
     <div class="minimal-container p-8 shadow-sm">
         <form action="/auth/login" method="POST" class="space-y-6">
+            {% if login_error %}
+            <div class="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {{ login_error }}
+            </div>
+            {% endif %}
+
             <div class="space-y-2">
                 <label for="email" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
                 <div class="relative group">
                     <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
                         <i class="bi bi-envelope"></i>
                     </span>
-                    <input type="email" id="email" name="email" required placeholder="name@company.com" style="padding-left: 64px;" class="w-full py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white transition-all text-sm">
+                    <input type="email" id="email" name="email" value="{{ email or '' }}" required placeholder="name@company.com" style="padding-left: 64px;" class="w-full py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white transition-all text-sm">
+                    <p id="email-error" class="text-xs text-red-600 mt-2 hidden"></p>
                 </div>
             </div>
 
@@ -25,12 +32,16 @@
                     <label for="password" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Password</label>
                     <a href="#" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest hover:underline">Forgot?</a>
                 </div>
-                <div class="relative group">
+                <div class="relative group password-field">
                     <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
                         <i class="bi bi-lock"></i>
                     </span>
-                    <input type="password" id="password" name="password" required placeholder="••••••••" style="padding-left: 64px;" class="w-full py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white transition-all text-sm">
+                    <input type="password" id="password" name="password" required placeholder="••••••••" style="padding-left: 64px; padding-right: 56px;" class="w-full py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white transition-all text-sm">
+                    <button type="button" aria-label="Toggle password visibility" onclick="togglePasswordVisibility(this)" class="password-toggle absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 z-10 cursor-pointer bg-transparent p-1 rounded-lg hover:text-blue-600 transition">
+                        <i class="bi bi-eye" id="password-eye"></i>
+                    </button>
                 </div>
+                <p id="password-error" class="text-xs text-red-600 mt-2 hidden"></p>
             </div>
 
             <div class="flex items-center gap-2">
@@ -41,6 +52,49 @@
             <button type="submit" class="w-full btn-minimal-primary py-4 text-lg">Sign In</button>
         </form>
 
+        {% block scripts %}
+        <script>
+            (function(){
+                const form = document.querySelector('form[action="/auth/login"]');
+                const email = document.getElementById('email');
+                const password = document.getElementById('password');
+                const emailError = document.getElementById('email-error');
+                const passwordError = document.getElementById('password-error');
+                const eye = document.getElementById('password-eye');
+
+                // Email validation
+                function validEmail(v){
+                    return /^\S+@\S+\.\S+$/.test(v);
+                }
+
+                // Toggle password visibility
+                // Inline validation on submit
+                if(form){
+                    form.addEventListener('submit', function(e){
+                        let ok = true;
+                        if(!validEmail(email.value)){
+                            emailError && (emailError.textContent = 'Please enter a valid email address.', emailError.classList.remove('hidden'));
+                            ok = false;
+                        } else {
+                            emailError && (emailError.textContent = '', emailError.classList.add('hidden'));
+                        }
+
+                        if(!password.value || password.value.length < 8){
+                            passwordError && (passwordError.textContent = 'Password must be at least 8 characters.', passwordError.classList.remove('hidden'));
+                            ok = false;
+                        } else {
+                            passwordError && (passwordError.textContent = '', passwordError.classList.add('hidden'));
+                        }
+
+                        if(!ok){
+                            e.preventDefault();
+                        }
+                    });
+                }
+            })();
+        </script>
+        {% endblock %}
+
         <!-- Divider -->
         <div class="relative py-8">
             <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-100"></div></div>
@@ -48,10 +102,10 @@
         </div>
 
         <!-- Social Login -->
-        <button class="w-full btn-minimal-secondary flex items-center justify-center gap-3 py-3 text-sm">
+        <a href="/auth/login/google" class="w-full btn-minimal-secondary flex items-center justify-center gap-3 py-3 text-sm">
             <i class="bi bi-google"></i>
             Google
-        </button>
+        </a>
     </div>
 
     <p class="mt-8 text-center text-sm text-slate-500">

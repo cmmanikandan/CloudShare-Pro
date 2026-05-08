@@ -7,8 +7,11 @@
         <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold border border-blue-100 mb-2">
             <i class="bi bi-stars"></i> The Future of File Sharing
         </div>
-        <h1 class="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
-            Move Files Across The Globe <br class="hidden md:block"> In Seconds
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-tight">
+            <span class="text-slate-900">Move Files</span>
+            <span class="text-blue-600"> Across The Globe</span>
+            <br class="hidden md:block">
+            <span class="text-slate-900">In </span><span class="text-blue-600">Seconds</span>
         </h1>
         <p class="text-base md:text-lg text-slate-500 font-medium px-4">
             Experience the fastest way to share, sync, and secure your largest files.
@@ -19,12 +22,13 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start">
         
         <!-- LEFT: UPLOAD SECTION -->
-        <div class="space-y-6 md:space-y-8">
+        <div class="space-y-8">
             <div class="flex items-center gap-3">
                 <h2 class="text-xl font-bold">Upload Files</h2>
                 <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase">Fast Storage</span>
             </div>
 
+            <!-- Upload Zone -->
             <div id="upload-initial" class="animate-fade-in">
                 <div id="drop-zone" class="border-2 border-dashed border-slate-200 rounded-3xl p-10 md:p-16 flex flex-col items-center justify-center gap-6 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
                     <div class="w-16 h-16 md:w-20 md:h-20 bg-blue-50 rounded-full flex items-center justify-center text-2xl md:text-3xl text-blue-600 group-hover:scale-105 transition duration-300">
@@ -58,6 +62,16 @@
                                         <option value="0">Never</option>
                                     </select>
                                 </div>
+                                <div class="md:col-span-2 flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700 uppercase tracking-widest">One-Time Download</p>
+                                        <p class="text-[10px] font-medium text-slate-400 mt-1">The file disappears after the first successful download.</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="upload-one-time" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -65,157 +79,93 @@
                 </div>
             </div>
 
-            <!-- MODAL: Config -->
-            <div id="upload-config-modal" class="hidden animate-fade-in">
-                <div class="minimal-container p-8 space-y-8">
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-lg">Selected Files</h4>
-                        <span id="file-stats" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">1 files | 0 KB</span>
-                    </div>
-
-                    <div id="selected-files-list" class="space-y-3 max-h-48 overflow-y-auto pr-2">
-                        <!-- File item -->
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Expiration</label>
-                            <select id="expiry-select" class="w-full">
-                                <option value="1">1 Hour</option>
-                                <option value="24" selected>24 Hours</option>
-                                <option value="168">7 Days</option>
-                            </select>
+            <!-- Telegram Bot Spotlight (The Feature that was missing) -->
+            <div class="minimal-container p-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white space-y-6 shadow-2xl shadow-blue-100 animate-fade-in">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl backdrop-blur-sm">
+                            <i class="bi bi-telegram"></i>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Access Control</label>
-                            <div class="flex items-center justify-between h-[46px] bg-slate-50 border border-slate-200 rounded-xl px-4">
-                                <span class="text-sm font-medium text-slate-600">Password</span>
-                                <input type="checkbox" id="password-toggle" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        <div>
+                            <h3 class="text-lg font-bold">CloudShare AI Bot</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                <span class="text-[10px] font-bold text-blue-100 uppercase tracking-widest">Active & Online</span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="flex gap-4">
-                        <button id="start-upload-btn" class="flex-grow btn-minimal-primary py-4">Start Upload</button>
-                        <button onclick="resetUpload()" class="btn-minimal-secondary py-4 px-8">Cancel</button>
-                    </div>
+                    <a href="https://t.me/CloudShareProbot" target="_blank" class="bg-white text-blue-600 px-6 py-2 rounded-xl text-xs font-black uppercase hover:bg-blue-50 transition shadow-lg">Open Bot</a>
                 </div>
-            </div>
-
-            <!-- MODAL: Progress -->
-            <div id="upload-progress-modal" class="hidden animate-fade-in">
-                <div class="minimal-container p-12 text-center space-y-8">
-                    <div class="space-y-4">
-                        <h4 class="text-2xl font-bold">Uploading...</h4>
-                        <p id="progress-stats" class="text-sm font-bold text-blue-600">0% &bull; 0 KB/s</p>
+                <div class="space-y-4">
+                    <p class="text-sm text-blue-50 leading-relaxed font-medium">
+                        Connect your account to receive real-time notifications and manage your files with simple AI commands.
+                    </p>
+                    <div class="bg-black/10 border border-white/10 p-4 rounded-2xl flex items-center justify-between group">
+                        <div class="space-y-0.5">
+                            <p class="text-[9px] font-black text-blue-200 uppercase tracking-widest">Your Private Link Code</p>
+                            <code class="text-sm font-black text-white">/link {{ current_user.id if current_user.is_authenticated else 'LOGIN' }}</code>
+                        </div>
+                        <i class="bi bi-copy text-blue-200 opacity-0 group-hover:opacity-100 transition cursor-pointer"></i>
                     </div>
-                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div id="progress-bar-inner" class="w-0 h-full bg-blue-600 transition-all duration-300"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODAL: Success -->
-            <div id="upload-success-modal" class="hidden animate-fade-in">
-                <div class="minimal-container p-0 overflow-hidden shadow-2xl max-w-2xl mx-auto">
-                    <div class="p-8 md:p-10 text-center space-y-8">
-                        <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto">
-                            <i class="bi bi-check-all"></i>
-                        </div>
-                        <div class="space-y-1">
-                            <h2 class="text-2xl font-black text-slate-900">Upload Complete!</h2>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Share ID: <span id="share-code-display" class="text-blue-600">------</span></p>
-                        </div>
-
-                        <!-- Share Link Bar -->
-                        <div class="relative group">
-                            <input type="text" id="share-link-final" readonly class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-5 pr-32 py-4 text-sm font-bold text-slate-900 outline-none">
-                            <button id="copy-btn-final" onclick="copyFinalLink()" class="absolute right-2 top-1/2 -translate-y-1/2 btn-minimal-primary py-2 px-6 text-xs">Copy Link</button>
-                        </div>
-
-                        <!-- Action Tabs -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                            <!-- Email Share -->
-                            <div class="text-left space-y-4 p-6 border border-slate-100 rounded-2xl bg-slate-50/30">
-                                <div class="flex items-center gap-2 text-blue-600">
-                                    <i class="bi bi-envelope-at-fill"></i>
-                                    <span class="text-[10px] font-black uppercase tracking-widest">Share via Email</span>
-                                </div>
-                                <div class="space-y-3">
-                                    <input type="email" id="share-email-recipient" placeholder="Recipient Email" class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs outline-none focus:border-blue-600 transition">
-                                    <textarea id="share-email-message" placeholder="Optional message..." class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs outline-none focus:border-blue-600 transition h-20 resize-none"></textarea>
-                                    <button id="send-email-btn" onclick="sendEmailShare()" class="w-full btn-minimal-secondary py-2.5 text-xs">Send Email</button>
-                                </div>
-                            </div>
-
-                            <!-- More Options -->
-                            <div class="text-left space-y-6 p-6 border border-slate-100 rounded-2xl bg-slate-50/30">
-                                <div class="space-y-4">
-                                    <div class="flex items-center gap-2 text-blue-500">
-                                        <i class="bi bi-telegram"></i>
-                                        <span class="text-[10px] font-black uppercase tracking-widest">Telegram Alert</span>
-                                    </div>
-                                    <button id="share-telegram-btn" onclick="shareToTelegram()" class="w-full btn-minimal-secondary py-2.5 text-xs flex items-center justify-center gap-2">
-                                        <i class="bi bi-send-fill"></i>
-                                        Share to Telegram
-                                    </button>
-                                </div>
-                                
-                                <div class="space-y-4 pt-2 border-t border-slate-100">
-                                    <div class="flex items-center gap-2 text-slate-400">
-                                        <i class="bi bi-qr-code"></i>
-                                        <span class="text-[10px] font-black uppercase tracking-widest">QR Code</span>
-                                    </div>
-                                    <button id="show-qr-btn-modal" onclick="showQRModal()" class="w-full bg-white border border-slate-200 text-slate-900 font-bold py-2.5 rounded-xl text-xs hover:bg-slate-50 transition">
-                                        Show QR Code
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-6 border-t border-slate-100">
-                            <button onclick="resetUpload()" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition">Upload more files</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- QR Share Modal -->
-            <div id="qr-share-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
-                <div class="bg-white rounded-3xl p-10 max-w-sm w-full text-center space-y-6 shadow-2xl">
-                    <h3 class="text-xl font-bold text-slate-900">Scan to Download</h3>
-                    <div id="qrcode-modal-canvas" class="flex justify-center p-4 bg-white border border-slate-100 rounded-2xl mx-auto w-fit"></div>
-                    <p class="text-xs text-slate-500 font-medium">Point your camera at this code to open the files on your phone.</p>
-                    <button onclick="document.getElementById('qr-share-modal').classList.add('hidden')" class="btn-minimal-secondary w-full py-3">Close</button>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT: DOWNLOAD SECTION -->
+        <!-- RIGHT: DOWNLOAD & P2P SECTION -->
         <div class="space-y-8">
             <div class="flex items-center gap-3">
                 <h2 class="text-xl font-bold">Download Files</h2>
                 <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Direct Access</span>
             </div>
 
+            <!-- Download Box -->
             <div class="minimal-container p-8 md:p-12 space-y-8">
                 <div class="space-y-4">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Enter Share ID</label>
                     <div class="flex gap-2 md:gap-3" id="share-id-inputs">
-                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 1)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
-                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 2)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
-                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 3)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
-                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 4)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
-                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 5)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
-                        <input type="text" maxlength="1" onkeyup="moveFocus(this, 6)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold">
+                        <input type="text" maxlength="1" oninput="forceUppercase(this)" onkeyup="moveFocus(this, 1)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold uppercase bg-gradient-to-b from-blue-50 to-white border border-blue-100 text-blue-900">
+                        <input type="text" maxlength="1" oninput="forceUppercase(this)" onkeyup="moveFocus(this, 2)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold uppercase bg-gradient-to-b from-blue-50 to-white border border-blue-100 text-blue-900">
+                        <input type="text" maxlength="1" oninput="forceUppercase(this)" onkeyup="moveFocus(this, 3)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold uppercase bg-gradient-to-b from-blue-50 to-white border border-blue-100 text-blue-900">
+                        <input type="text" maxlength="1" oninput="forceUppercase(this)" onkeyup="moveFocus(this, 4)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold uppercase bg-gradient-to-b from-blue-50 to-white border border-blue-100 text-blue-900">
+                        <input type="text" maxlength="1" oninput="forceUppercase(this)" onkeyup="moveFocus(this, 5)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold uppercase bg-gradient-to-b from-blue-50 to-white border border-blue-100 text-blue-900">
+                        <input type="text" maxlength="1" oninput="forceUppercase(this)" onkeyup="moveFocus(this, 6)" class="w-full h-12 md:h-16 text-center text-xl md:text-2xl font-bold uppercase bg-gradient-to-b from-blue-50 to-white border border-blue-100 text-blue-900">
+                    </div>
+                    <div id="share-id-error" class="hidden text-xs font-bold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                        Wrong share code. Please check the code and try again.
                     </div>
                 </div>
 
-                <button onclick="fetchFile()" class="w-full btn-minimal-primary py-5 text-lg">Access Files</button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="fetchFile()" class="w-full btn-minimal-primary py-5 text-lg">Access Files</button>
+                    <button onclick="clearShareCode()" class="w-full btn-minimal-secondary py-5 text-lg">Clear Code</button>
+                </div>
                 
                 <div class="pt-8 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     <span class="flex items-center gap-2"><i class="bi bi-shield-check text-blue-600"></i> Secure Download</span>
                     <span class="flex items-center gap-2"><i class="bi bi-clock"></i> No Wait Time</span>
+                </div>
+            </div>
+
+            <!-- P2P Transfer Section -->
+            <div class="space-y-4 pt-6 border-t border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-900">P2P Instant Transfer</h3>
+                    <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase">Experimental</span>
+                </div>
+                <div class="minimal-container p-6 bg-slate-50/50 space-y-4">
+                    <div id="p2p-initial" class="space-y-4">
+                        <p class="text-xs text-slate-500">Share files directly device-to-device without uploading to our servers.</p>
+                        <div class="flex gap-2">
+                            <button class="flex-grow btn-minimal-primary py-2 text-xs">Create Session</button>
+                            <input type="text" placeholder="Join Code" oninput="forceUppercase(this)" class="w-24 bg-gradient-to-b from-blue-50 to-white border border-blue-100 rounded-xl px-3 text-xs outline-none uppercase text-blue-900">
+                            <button class="btn-minimal-secondary py-2 px-4 text-xs">Join</button>
+                        </div>
+                    </div>
+                    <div id="p2p-active" class="hidden text-center space-y-4 py-4">
+                        <div class="text-3xl font-black text-blue-600 tracking-widest" id="p2p-session-id">------</div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Your Session Code</p>
+                        <p class="text-[10px] text-blue-500 font-medium animate-pulse" id="p2p-status">Waiting for peer...</p>
+                    </div>
                 </div>
             </div>
 
@@ -229,6 +179,104 @@
     </div>
 </div>
 
+<!-- All Modals (Hidden by default) -->
+<div id="upload-config-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
+    <div class="minimal-container p-8 space-y-8 max-w-lg w-full shadow-2xl">
+        <div class="flex justify-between items-center">
+            <h4 class="font-bold text-lg">Selected Files</h4>
+            <span id="file-stats" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">1 files | 0 KB</span>
+        </div>
+        <div id="selected-files-list" class="space-y-3 max-h-48 overflow-y-auto pr-2"></div>
+        <div class="flex gap-4">
+            <button id="start-upload-btn" class="flex-grow btn-minimal-primary py-4">Start Upload</button>
+            <button onclick="resetUpload()" class="btn-minimal-secondary py-4 px-8">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Progress -->
+<div id="upload-progress-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
+    <div class="minimal-container p-12 text-center space-y-8 max-w-md w-full shadow-2xl">
+        <div class="space-y-4">
+            <h4 class="text-2xl font-bold">Uploading...</h4>
+            <p id="progress-stats" class="text-sm font-bold text-blue-600">0% • 0 KB/s</p>
+        </div>
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div id="progress-bar-inner" class="w-0 h-full bg-blue-600 transition-all duration-300"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Success Dashboard -->
+<div id="upload-success-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fade-in overflow-y-auto">
+    <div class="minimal-container p-0 overflow-hidden shadow-2xl max-w-2xl w-full my-10 bg-white">
+        <div class="p-8 md:p-10 text-center space-y-8">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto">
+                <i class="bi bi-check-all"></i>
+            </div>
+            <div class="space-y-1">
+                <h2 class="text-2xl font-black text-slate-900">Upload Complete!</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Share ID: <span id="share-code-display" class="text-blue-600">------</span></p>
+            </div>
+
+            <!-- Share Link Bar -->
+            <div class="relative group">
+                <input type="text" id="share-link-final" readonly class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-5 pr-32 py-4 text-sm font-bold text-slate-900 outline-none">
+                <button id="copy-btn-final" onclick="copyFinalLink()" class="absolute right-2 top-1/2 -translate-y-1/2 btn-minimal-primary py-2 px-6 text-xs">Copy Link</button>
+            </div>
+
+            <!-- Action Tabs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                <!-- Email Share -->
+                <div class="text-left space-y-4 p-6 border border-slate-100 rounded-2xl bg-slate-50/30">
+                    <div class="flex items-center gap-2 text-blue-600">
+                        <i class="bi bi-envelope-at-fill"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Share via Email</span>
+                    </div>
+                    <div class="space-y-3">
+                        <input type="email" id="share-email-recipient" placeholder="Recipient Email" class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs outline-none focus:border-blue-600 transition">
+                        <textarea id="share-email-message" placeholder="Optional message..." class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs outline-none focus:border-blue-600 transition h-20 resize-none"></textarea>
+                        <button id="send-email-btn" onclick="sendEmailShare()" class="w-full btn-minimal-secondary py-2.5 text-xs">Send Email</button>
+                    </div>
+                </div>
+
+                <!-- More Options -->
+                <div class="text-left space-y-6 p-6 border border-slate-100 rounded-2xl bg-slate-50/30">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 text-blue-500">
+                            <i class="bi bi-telegram"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Telegram Alert</span>
+                        </div>
+                        <button id="share-telegram-btn" onclick="shareToTelegram()" class="w-full btn-minimal-secondary py-2.5 text-xs flex items-center justify-center gap-2">
+                            <i class="bi bi-send-fill"></i> Share to Telegram
+                        </button>
+                    </div>
+                    <div class="space-y-4 pt-2 border-t border-slate-100">
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <i class="bi bi-qr-code"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest">QR Code</span>
+                        </div>
+                        <button id="show-qr-btn-modal" onclick="showQRModal()" class="w-full bg-white border border-slate-200 text-slate-900 font-bold py-2.5 rounded-xl text-xs hover:bg-slate-50 transition">Show QR Code</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100">
+                <button onclick="resetUpload()" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition">Upload more files</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QR Share Modal -->
+<div id="qr-share-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-6 animate-fade-in">
+    <div class="bg-white rounded-3xl p-10 max-w-sm w-full text-center space-y-6 shadow-2xl">
+        <h3 class="text-xl font-bold text-slate-900">Scan to Download</h3>
+        <div id="qrcode-modal-canvas" class="flex justify-center p-4 bg-white border border-slate-100 rounded-2xl mx-auto w-fit"></div>
+        <p class="text-xs text-slate-500 font-medium">Point your camera at this code to open the files on your phone.</p>
+        <button onclick="document.getElementById('qr-share-modal').classList.add('hidden')" class="btn-minimal-secondary w-full py-3">Close</button>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -251,7 +299,7 @@
 
     let selectedFiles = [];
 
-    // Drag & Drop
+    // Drag & Drop / Advanced
     const toggleAdvanced = document.getElementById('toggle-advanced');
     const advancedOptions = document.getElementById('advanced-options');
 
@@ -277,10 +325,7 @@
     function prepareFiles(files) {
         if (files.length === 0) return;
         selectedFiles = Array.from(files);
-        
-        initialView.classList.add('hidden');
         configModal.classList.remove('hidden');
-        
         fileListContainer.innerHTML = '';
         let totalSize = 0;
         selectedFiles.forEach((file, index) => {
@@ -293,125 +338,132 @@
             `;
             fileListContainer.appendChild(item);
         });
-        
         fileStats.textContent = `${selectedFiles.length} files | ${formatBytes(totalSize)}`;
     }
 
     window.removeFile = (index) => {
         selectedFiles.splice(index, 1);
         if (selectedFiles.length === 0) resetUpload();
-        else prepareFiles([]); 
+        else prepareFiles(selectedFiles);
+    };
+
+    function resetUpload() {
+        selectedFiles = [];
+        configModal.classList.add('hidden');
+        progressModal.classList.add('hidden');
+        successModal.classList.add('hidden');
+        initialView.classList.remove('hidden');
+        fileInput.value = '';
     }
 
     document.getElementById('start-upload-btn').onclick = () => performUpload();
 
     function performUpload() {
         if (selectedFiles.length === 0) return;
-        
         configModal.classList.add('hidden');
         progressModal.classList.remove('hidden');
-        
         const formData = new FormData();
         selectedFiles.forEach(file => formData.append('file', file));
-
-        // Add advanced options
         const password = document.getElementById('upload-password').value;
         const expiryDays = document.getElementById('upload-expiry').value;
+        const oneTime = document.getElementById('upload-one-time').checked;
         if (password) formData.append('password', password);
         if (expiryDays) formData.append('expiry_days', expiryDays);
+        if (oneTime) formData.append('one_time_download', '1');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/upload', true);
-
         let startTime = Date.now();
-
         xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {
                 const percent = Math.round((e.loaded / e.total) * 100);
                 progressBar.style.width = percent + '%';
-                
                 let duration = (Date.now() - startTime) / 1000;
                 let speed = (e.loaded / 1024) / (duration || 1);
                 progressStats.textContent = `${percent}% • ${speed.toFixed(1)} KB/s`;
             }
         };
-
         xhr.onload = () => {
             if (xhr.status === 201) {
-                const data = JSON.parse(xhr.responseText);
-                showSuccess(data);
+                showSuccess(JSON.parse(xhr.responseText));
             } else {
                 alert('Upload failed: ' + xhr.responseText);
                 resetUpload();
             }
         };
-
         xhr.send(formData);
     }
 
     function showSuccess(data) {
         progressModal.classList.add('hidden');
         successModal.classList.remove('hidden');
-        
         const token = data.share_url.split('/').pop();
         shareCodeDisplay.innerText = token;
         shareLinkFinal.value = data.share_url;
-        
-        // Store current share info for other actions
-        window.currentShare = {
-            file_ids: data.file_ids,
-            url: data.share_url,
-            token: token
-        };
+        window.currentShare = { file_ids: data.file_ids, url: data.share_url, token: token };
     }
 
     async function sendEmailShare() {
         const recipient = document.getElementById('share-email-recipient').value;
         const message = document.getElementById('share-email-message').value;
         const btn = document.getElementById('send-email-btn');
-        
-        if (!recipient) {
-            alert('Please enter a recipient email.');
-            return;
-        }
-        
-        btn.disabled = true;
-        btn.innerText = 'Sending...';
-        
+        if (!recipient) { alert('Please enter a recipient email.'); return; }
+        btn.disabled = true; btn.innerText = 'Sending...';
         try {
             const response = await fetch('/api/share/email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    file_ids: window.currentShare.file_ids,
-                    recipient: recipient,
-                    message: message
-                })
+                body: JSON.stringify({ file_ids: window.currentShare.file_ids, recipient: recipient, message: message })
             });
-            
+            const data = await response.json().catch(() => ({}));
             if (response.ok) {
-                alert('Email shared successfully!');
+                showToast('Email shared successfully!', 'success');
                 document.getElementById('share-email-recipient').value = '';
                 document.getElementById('share-email-message').value = '';
             } else {
-                alert('Failed to send email.');
+                const msg = data.error || 'Failed to send email.';
+                showToast(msg, 'error');
             }
-        } catch (err) {
-            alert('Error sending email.');
-        } finally {
-            btn.disabled = false;
-            btn.innerText = 'Send Email';
+        } catch (err) { showToast('Error sending email', 'error'); } finally { btn.disabled = false; btn.innerText = 'Send Email'; }
+    }
+
+    function shareToTelegram() {
+        const text = `📁 Files shared via CloudShare Pro:\n\n${window.currentShare.url}`;
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(window.currentShare.url)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function showQRModal() {
+        const qrContainer = document.getElementById('qrcode-modal-canvas');
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, { text: window.currentShare.url, width: 256, height: 256, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+        document.getElementById('qr-share-modal').classList.remove('hidden');
+    }
+
+    function copyFinalLink() {
+        const btn = document.getElementById('copy-btn-final');
+        const text = shareLinkFinal.value || window.currentShare?.url;
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerText = 'Copied!';
+                showToast('Link copied to clipboard', 'success');
+                setTimeout(() => btn.innerText = 'Copy Link', 2000);
+            }).catch(() => {
+                fallbackCopy();
+            });
+        } else {
+            fallbackCopy();
+        }
+
+        function fallbackCopy(){
+            shareLinkFinal.select();
+            try { document.execCommand('copy'); showToast('Link copied to clipboard', 'success'); } catch(e){ showToast('Copy failed', 'error'); }
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = 'Copy Link', 2000);
         }
     }
 
-    function resetUpload() {
-        initialView.classList.remove('hidden');
-        configModal.classList.add('hidden');
-        progressModal.classList.add('hidden');
-        successModal.classList.add('hidden');
-        fileInput.value = '';
-        selectedFiles = [];
-    }
+    // (toasts handled globally in layout)
 
     function formatBytes(bytes, decimals = 2) {
         if (bytes === 0) return '0 Bytes';
@@ -422,88 +474,70 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    function copyShareCode() {
-        navigator.clipboard.writeText(shareCodeDisplay.textContent);
-        alert('Code copied!');
-    }
-
-    function copyFinalLink() {
-        shareLinkFinal.select();
-        document.execCommand('copy');
-        alert('Link copied!');
-    }
-
-    // Share ID Inputs
-    function moveFocus(input, index) {
-        if (input.value.length >= 1 && index < 6) {
-            const nextInput = document.querySelectorAll('#share-id-inputs input')[index];
-            nextInput.focus();
+    function moveFocus(item, next) {
+        if (item.value.length >= item.maxLength) {
+            const nextInput = document.querySelector(`#share-id-inputs input:nth-child(${next + 1})`);
+            if (nextInput) nextInput.focus();
         }
     }
 
-    function fetchFile() {
+    function forceUppercase(input) {
+        input.value = input.value.toUpperCase();
+        clearShareError();
+    }
+
+    function clearShareCode() {
         const inputs = document.querySelectorAll('#share-id-inputs input');
-        let shareId = '';
-        inputs.forEach(input => shareId += input.value);
-        if (shareId.length === 6) {
-            window.location.href = `/files/download/${shareId}`;
-        } else {
-            alert('Please enter a valid 6-character Share ID');
-        }
+        inputs.forEach(input => input.value = '');
+        const errorBox = document.getElementById('share-id-error');
+        errorBox.classList.add('hidden');
+        inputs[0]?.focus();
     }
 
-    // --- P2P Transfer Logic ---
-    const p2pStartBtn = document.querySelector('#p2p-initial button');
-    const p2pStatus = document.getElementById('p2p-status');
-    const p2pSessionId = document.getElementById('p2p-session-id');
-    const p2pInitial = document.getElementById('p2p-initial');
-    const p2pActive = document.getElementById('p2p-active');
-    const p2pJoinBtn = document.querySelector('#p2p-initial .btn-minimal-secondary');
-    const p2pJoinInput = document.querySelector('#p2p-initial input');
-
-    p2pStartBtn.onclick = () => {
-        // Mock Session Generation
-        const sessionId = Math.random().toString(36).substring(2, 8).toUpperCase();
-        p2pSessionId.innerText = sessionId;
-        
-        p2pInitial.classList.add('hidden');
-        p2pActive.classList.remove('hidden');
-        
-        // Mock Status Sequence
-        const statuses = [
-            "Initializing WebRTC...",
-            "Creating signaling channel...",
-            "Waiting for peer to join..."
-        ];
-        
-        let i = 0;
-        const interval = setInterval(() => {
-            if (i < statuses.length) {
-                p2pStatus.innerText = statuses[i];
-                i++;
-            } else {
-                clearInterval(interval);
-            }
-        }, 1000);
-    };
-
-    function shareToTelegram() {
-        const text = `📁 Files shared via CloudShare Pro:\n\n${window.currentShare.url}`;
-        window.open(`https://t.me/share/url?url=${encodeURIComponent(window.currentShare.url)}&text=${encodeURIComponent(text)}`, '_blank');
-    }
-
-    function showQRModal() {
-        const qrContainer = document.getElementById('qrcode-modal-canvas');
-        qrContainer.innerHTML = ''; // Clear previous
-        new QRCode(qrContainer, {
-            text: window.currentShare.url,
-            width: 256,
-            height: 256,
-            colorDark : "#0f172a",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+    function showShareError(message = 'Wrong share code. Please check the code and try again.') {
+        const errorBox = document.getElementById('share-id-error');
+        errorBox.textContent = message;
+        errorBox.classList.remove('hidden');
+        document.querySelectorAll('#share-id-inputs input').forEach(input => {
+            input.classList.add('border-red-300', 'bg-red-50', 'text-red-700');
+            input.classList.remove('border-blue-100', 'text-blue-900');
         });
-        document.getElementById('qr-share-modal').classList.remove('hidden');
+    }
+
+    function clearShareError() {
+        const errorBox = document.getElementById('share-id-error');
+        errorBox.classList.add('hidden');
+        document.querySelectorAll('#share-id-inputs input').forEach(input => {
+            input.classList.remove('border-red-300', 'bg-red-50', 'text-red-700');
+            input.classList.add('border-blue-100', 'text-blue-900');
+        });
+    }
+
+    async function fetchFile() {
+        const inputs = document.querySelectorAll('#share-id-inputs input');
+        let code = '';
+        inputs.forEach(i => code += i.value);
+        code = code.trim().toUpperCase();
+
+        if (code.length !== 6) {
+            showShareError('Please enter a valid 6-character share code.');
+            return;
+        }
+
+        clearShareError();
+
+        try {
+            const response = await fetch(`/files/validate/${code}`);
+            const data = await response.json();
+
+            if (data.valid) {
+                window.location.href = `/files/download/${code}`;
+            } else {
+                showShareError('Wrong share code. Please check the code and try again.');
+            }
+        } catch (error) {
+            showShareError('Could not check the code right now. Please try again.');
+        }
     }
 </script>
 {% endblock %}

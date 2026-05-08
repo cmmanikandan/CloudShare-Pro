@@ -12,16 +12,74 @@
         <!-- Settings Sections -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
             <!-- Sidebar Navigation -->
-            <div class="space-y-1">
-                <button class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold bg-blue-50 text-blue-600">Integrations</button>
-                <button class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-400 hover:bg-slate-50 transition">Notifications</button>
-                <button class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-400 hover:bg-slate-50 transition">Security</button>
+            <div class="space-y-1 md:sticky md:top-24 self-start">
+                <a href="#profile" class="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold bg-blue-50 text-blue-600">Profile</a>
+                <a href="#integrations" class="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition">Integrations</a>
+                <a href="#notifications" class="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition">Notifications</a>
+                <a href="#security" class="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition">Security</a>
             </div>
 
             <!-- Main Content -->
             <div class="md:col-span-2 space-y-8">
+                <!-- Profile Summary / Edit -->
+                <form id="profile-form" method="POST" class="minimal-container p-8 space-y-6">
+                    <input type="hidden" name="action" value="profile">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden text-xl font-bold text-slate-700">
+                            {% if current_user.profile_image %}
+                                <img src="{{ url_for('static', filename=current_user.profile_image) }}" alt="avatar" class="w-16 h-16 rounded-full object-cover">
+                            {% else %}
+                                {{ (current_user.username[:2] | upper) if current_user.username else 'U' }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">{{ current_user.username }}</h3>
+                            <p class="text-xs text-slate-500">{{ current_user.email }}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Role</p>
+                            <p class="mt-2 text-sm font-bold text-slate-900">{{ current_user.role|title }}</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Joined</p>
+                            <p class="mt-2 text-sm font-bold text-slate-900">{{ current_user.created_at.strftime('%b %d, %Y') }}</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Verification</p>
+                            <p class="mt-2 text-sm font-bold {% if current_user.is_verified %}text-emerald-600{% else %}text-amber-600{% endif %}">
+                                {{ 'Verified' if current_user.is_verified else 'Pending' }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase">Username</label>
+                            <input type="text" name="username" value="{{ current_user.username }}" class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm outline-none focus:border-blue-600 transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase">Email</label>
+                            <input type="email" name="email" value="{{ current_user.email }}" class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm outline-none focus:border-blue-600 transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase">Current Password</label>
+                            <input type="password" name="current_password" placeholder="Required only for password change" class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm outline-none focus:border-blue-600 transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase">New Password</label>
+                            <input type="password" name="new_password" placeholder="Leave blank to keep same" class="w-full bg-white border border-slate-200 rounded-lg py-2.5 px-3 text-sm outline-none focus:border-blue-600 transition">
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn-minimal-primary px-8 py-3">Save Profile</button>
+                    </div>
+                </form>
+
                 <!-- Telegram Integration -->
-                <div class="minimal-container p-8 space-y-6">
+                <form id="settings-form" class="space-y-8" method="POST">
+                <input type="hidden" name="action" value="preferences">
+                <div id="integrations" class="minimal-container p-8 space-y-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl">
@@ -34,9 +92,9 @@
                         </div>
                         <div class="flex items-center gap-2">
                             {% if current_user.telegram_notifications %}
-                                <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Connected</span>
+                                <span id="telegram-status-badge" class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Connected</span>
                             {% else %}
-                                <span class="bg-slate-50 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase">Not Linked</span>
+                                <span id="telegram-status-badge" class="bg-slate-50 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase">Not Linked</span>
                             {% endif %}
                         </div>
                     </div>
@@ -48,7 +106,7 @@
                         <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
                             <span class="text-xs font-bold text-slate-700">Receive Telegram Alerts</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" {% if current_user.telegram_notifications %}checked{% endif %} class="sr-only peer">
+                                <input type="checkbox" name="telegram_notifications" value="1" {% if current_user.telegram_notifications %}checked{% endif %} class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
@@ -56,7 +114,7 @@
                 </div>
 
                 <!-- Email Notifications -->
-                <div class="minimal-container p-8 space-y-6">
+                <div id="notifications" class="minimal-container p-8 space-y-6">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center text-xl">
                             <i class="bi bi-envelope-fill"></i>
@@ -71,25 +129,94 @@
                         <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
                             <span class="text-xs font-bold text-slate-700">Successful Upload Alerts</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" {% if current_user.email_notifications %}checked{% endif %} class="sr-only peer">
+                                <input type="checkbox" name="email_notifications" value="1" {% if current_user.email_notifications %}checked{% endif %} class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
                         <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
                             <span class="text-xs font-bold text-slate-700">File Download Alerts</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer">
+                                <input type="checkbox" disabled class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
+                        </div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Download alerts are planned next.</p>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div id="security" class="minimal-container p-8 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-500 text-white rounded-xl flex items-center justify-center text-xl">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Security</h3>
+                            <p class="text-xs text-slate-500">Password and account protection options can be added here next.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end">
-                    <button class="btn-minimal-primary px-10 py-3">Save Changes</button>
+                    <button type="submit" form="settings-form" class="btn-minimal-primary px-10 py-3">Save Changes</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+{% block scripts %}
+<script>
+    (function() {
+        const form = document.getElementById('settings-form');
+        if (!form) return;
+
+        const telegramBadge = document.getElementById('telegram-status-badge');
+
+        function updateTelegramBadge(enabled) {
+            if (!telegramBadge) return;
+            telegramBadge.textContent = enabled ? 'Connected' : 'Not Linked';
+            telegramBadge.className = enabled
+                ? 'bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase'
+                : 'bg-slate-50 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase';
+        }
+
+        const liveToggles = form.querySelectorAll('input[type="checkbox"][name="telegram_notifications"], input[type="checkbox"][name="email_notifications"]');
+
+        liveToggles.forEach((toggle) => {
+            toggle.addEventListener('change', async () => {
+                const previous = !toggle.checked;
+                if (toggle.name === 'telegram_notifications') {
+                    updateTelegramBadge(toggle.checked);
+                }
+
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch('/settings', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to save settings');
+                    }
+
+                    if (window.showToast) {
+                        showToast('Settings saved successfully.', 'success');
+                    }
+                } catch (error) {
+                    toggle.checked = previous;
+                    if (toggle.name === 'telegram_notifications') {
+                        updateTelegramBadge(previous);
+                    }
+
+                    if (window.showToast) {
+                        showToast('Failed to save settings.', 'error');
+                    }
+                }
+            });
+        });
+    })();
+</script>
+{% endblock %}
 {% endblock %}

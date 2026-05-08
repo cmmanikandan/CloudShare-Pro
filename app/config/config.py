@@ -21,15 +21,17 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    MAIL_PROVIDER = (os.environ.get('MAIL_PROVIDER') or 'smtp').lower()
+
+    # Optional Resend (free tier available). Used only if MAIL_PROVIDER=resend.
+    RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
+    RESEND_FROM = os.environ.get('RESEND_FROM') or MAIL_DEFAULT_SENDER
 
     # Telegram
     TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 
-    # Firebase (for frontend)
-    VITE_FIREBASE_API_KEY = os.environ.get('VITE_FIREBASE_API_KEY')
-    VITE_FIREBASE_AUTH_DOMAIN = os.environ.get('VITE_FIREBASE_AUTH_DOMAIN')
-    VITE_FIREBASE_PROJECT_ID = os.environ.get('VITE_FIREBASE_PROJECT_ID')
-    VITE_FIREBASE_STORAGE_BUCKET = os.environ.get('VITE_FIREBASE_STORAGE_BUCKET')
-    VITE_FIREBASE_MESSAGING_SENDER_ID = os.environ.get('VITE_FIREBASE_MESSAGING_SENDER_ID')
-    VITE_FIREBASE_APP_ID = os.environ.get('VITE_FIREBASE_APP_ID')
-    VITE_FIREBASE_MEASUREMENT_ID = os.environ.get('VITE_FIREBASE_MEASUREMENT_ID')
+    # Google OAuth
+    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+
+    # (Firebase frontend config removed)

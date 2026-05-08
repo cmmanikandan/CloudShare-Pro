@@ -93,25 +93,44 @@
 
         <!-- Analytics Sidebar -->
         <div class="space-y-8">
-            <div class="minimal-container p-8 space-y-6">
+            <div class="minimal-container p-6 space-y-6">
+                <!-- Profile / Account Widget -->
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-700">
+                        {% if current_user.profile_image %}
+                            <img src="{{ url_for('static', filename=current_user.profile_image) }}" alt="avatar" class="w-16 h-16 rounded-full object-cover">
+                        {% else %}
+                            {{ (current_user.username[:2] | upper) if current_user.username else 'U' }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="text-lg font-bold text-slate-900">{{ current_user.username }}</p>
+                        <p class="text-xs text-slate-500">{{ current_user.email }}</p>
+                        <div class="mt-3 flex gap-2">
+                            <a href="/settings" class="btn-minimal-secondary py-1 px-3 text-xs">Account</a>
+                            <a href="/auth/logout" class="btn-minimal-primary py-1 px-3 text-xs">Logout</a>
+                        </div>
+                    </div>
+                </div>
+
                 <h3 class="text-lg font-bold text-slate-900">Download Activity</h3>
-                <div class="h-64">
+                <div class="h-72">
                     <canvas id="downloadChart"></canvas>
                 </div>
                 <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
-                        <span class="text-xs font-bold text-slate-500 uppercase">Last 7 Days</span>
+                        <span id="chart-range-label" class="text-xs font-bold text-slate-500 uppercase">Last 7 Days</span>
                     </div>
-                    <span class="text-xs font-black text-slate-900">+12% vs last week</span>
+                    <span id="chart-total-label" class="text-xs font-black text-slate-900">0 downloads</span>
                 </div>
             </div>
 
             <div class="minimal-container p-8 bg-blue-600 text-white border-none shadow-xl shadow-blue-200">
-                <h3 class="text-xl font-bold mb-2">CloudShare Pro</h3>
-                <p class="text-sm opacity-80 mb-6">Unlock unlimited storage and dedicated support.</p>
-                <a href="/pricing" class="block w-full bg-white text-blue-600 font-bold py-3 rounded-xl transition text-center hover:bg-slate-50">
-                    Upgrade Now
+                <h3 class="text-xl font-bold mb-2">CloudShare Pro — Free</h3>
+                <p class="text-sm opacity-80 mb-6">CloudShare Pro remains fully free — unlimited core features without payment.</p>
+                <a href="/features" class="block w-full bg-white text-blue-600 font-bold py-3 rounded-xl transition text-center hover:bg-slate-50">
+                    Learn More
                 </a>
             </div>
         </div>
@@ -174,6 +193,7 @@
                         <div>
                             <p class="font-bold text-slate-900 max-w-[200px] truncate" title="${file.filename}">${file.filename}</p>
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${file.mime_type || 'Unknown'}</p>
+                            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Code: ${file.share_code || '------'}</p>
                         </div>
                     </div>
                 </td>
@@ -184,8 +204,10 @@
                 </td>
                 <td class="px-8 py-5 text-right">
                     <div class="flex justify-end gap-1">
-                        <button onclick="copyLink('${file.url}')" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Copy Link"><i class="bi bi-link-45deg text-lg"></i></button>
+                        <button onclick="copyLink('${file.download_page_url || file.download_url}')" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Copy Share Link"><i class="bi bi-link-45deg text-lg"></i></button>
+                        <button onclick="copyCode('${file.share_code || ''}')" class="p-2 text-slate-400 hover:text-indigo-600 transition" title="Copy Code"><i class="bi bi-hash text-lg"></i></button>
                         <button onclick="deleteFile(${file.id})" class="p-2 text-slate-400 hover:text-red-500 transition" title="Delete"><i class="bi bi-trash text-lg"></i></button>
+                            <button onclick="renameFile(${file.id})" class="p-2 text-slate-400 hover:text-green-500 transition" title="Rename"><i class="bi bi-pencil text-lg"></i></button>
                     </div>
                 </td>
             </tr>
@@ -233,10 +255,58 @@
         }
     }
 
+    async function renameFile(id) {
+        const currentFile = allFiles.find(file => file.id === id);
+        const nextName = prompt('Enter a new file name', currentFile ? currentFile.filename : '');
+        if (nextName === null) return;
+
+        const cleaned = nextName.trim();
+        if (cleaned.length < 2) {
+            showToast('Please enter a valid file name', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/files/${id}/rename`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: cleaned })
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                showToast(data.error || 'Rename failed', 'error');
+                return;
+            }
+
+            allFiles = allFiles.map(file => file.id === id ? { ...file, filename: data.filename || cleaned } : file);
+            renderTable(allFiles);
+            showToast('File renamed successfully', 'success');
+        } catch (error) {
+            showToast('Rename failed', 'error');
+        }
+    }
+
     // Copy Link
     function copyLink(url) {
-        navigator.clipboard.writeText(url);
-        alert('File link copied to clipboard!');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => showToast('File link copied to clipboard', 'success')).catch(() => { try { document.execCommand('copy'); showToast('File link copied to clipboard', 'success'); } catch(e){ alert('Copy failed'); } });
+        } else {
+            try { document.execCommand('copy'); showToast('File link copied to clipboard', 'success'); } catch(e){ alert('Copy failed'); }
+        }
+    }
+
+    function copyCode(code) {
+        if (!code) {
+            showToast('No code available', 'error');
+            return;
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(code).then(() => showToast('Download code copied', 'success')).catch(() => { try { document.execCommand('copy'); showToast('Download code copied', 'success'); } catch(e){ alert('Copy failed'); } });
+        } else {
+            try { document.execCommand('copy'); showToast('Download code copied', 'success'); } catch(e){ alert('Copy failed'); }
+        }
     }
 
     // Search
@@ -246,34 +316,84 @@
         renderTable(filtered);
     };
 
-    // Chart
-    const ctx = document.getElementById('downloadChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Downloads',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                fill: true,
-                backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                borderColor: '#2563eb',
-                borderWidth: 2,
-                tension: 0.4,
-                pointRadius: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { display: false },
-                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } }
-            }
+    let chartInstance = null;
+
+    function renderChart(labels, data) {
+        const canvas = document.getElementById('downloadChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (chartInstance) {
+            chartInstance.destroy();
         }
-    });
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Downloads',
+                    data,
+                    fill: true,
+                    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                    borderColor: '#2563eb',
+                    borderWidth: 2,
+                    tension: 0.35,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: '#2563eb',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                        ticks: { color: '#94a3b8', font: { size: 10, weight: 'bold' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { size: 10, weight: 'bold' } }
+                    }
+                }
+            }
+        });
+    }
+
+    async function fetchAnalytics() {
+        try {
+            const response = await fetch('/api/analytics');
+            if (!response.ok) throw new Error('Failed to load analytics');
+
+            const analytics = await response.json();
+            const trend = analytics.daily_downloads || [];
+            const labels = trend.map(item => item.label);
+            const data = trend.map(item => item.count);
+            const total = analytics.total_downloads || 0;
+
+            renderChart(labels.length ? labels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data.length ? data : [0, 0, 0, 0, 0, 0, 0]);
+
+            const chartTotalLabel = document.getElementById('chart-total-label');
+            if (chartTotalLabel) {
+                chartTotalLabel.textContent = `${total.toLocaleString()} downloads`;
+            }
+
+            const chartRangeLabel = document.getElementById('chart-range-label');
+            if (chartRangeLabel && trend.length) {
+                chartRangeLabel.textContent = `${trend[0].date} to ${trend[trend.length - 1].date}`;
+            }
+        } catch (error) {
+            console.error(error);
+            renderChart(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], [0, 0, 0, 0, 0, 0, 0]);
+        }
+    }
 
     fetchFiles();
+    fetchAnalytics();
 </script>
 {% endblock %}

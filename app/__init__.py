@@ -15,6 +15,8 @@ login_manager = LoginManager()
 migrate = Migrate()
 jwt = JWTManager()
 mail = Mail()
+from authlib.integrations.flask_client import OAuth
+oauth = OAuth()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -25,7 +27,22 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
+    oauth.init_app(app)
     CORS(app)
+
+    # Google OAuth Config (register only if credentials are provided)
+    google_client_id = app.config.get('GOOGLE_CLIENT_ID')
+    google_client_secret = app.config.get('GOOGLE_CLIENT_SECRET')
+    if google_client_id and google_client_secret:
+        oauth.register(
+            name='google',
+            client_id=google_client_id,
+            client_secret=google_client_secret,
+            server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+            client_kwargs={
+                'scope': 'openid email profile'
+            }
+        )
 
     # Cloudinary Config
     cloudinary.config(
